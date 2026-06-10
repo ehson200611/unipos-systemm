@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m ensurepip --user)",
+      "Bash(python3 -m ensurepip)",
+      "Bash(apt-cache show *)",
+      "Bash(.venv/bin/pip install *)",
+      "Bash(.venv/bin/python manage.py migrate)",
+      "Bash(python3)",
+      "Bash(curl -fsSL https://deb.nodesource.com/setup_20.x)",
+      "Bash(sudo -E bash -)",
+      "Bash(sudo apt-get install -y nodejs)",
+      "Bash(nodejs --version)",
+      "Read(//usr/bin/**)",
+      "Read(//usr/local/bin/**)",
+      "Bash(ls /tmp/node-v20.18.0-linux-x64/bin/ 2>/dev/null || echo \"Chiqarilmagan\")",
+      "Read(//tmp/node-v20.18.0-linux-x64/**)",
+      "Read(//tmp/**)",
+      "Bash(tar -xf /tmp/node-v20.18.0-linux-x64.tar.xz -C /tmp/)"
+    ]
+  }
+}

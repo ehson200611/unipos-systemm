@@ -1,0 +1,46 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tar -xf /tmp/node.tar.xz -C /tmp/)",
+      "Bash(ls \"/home/hp-ubuntu/Рабочий стол/pos-frontend/src/\")",
+      "Read(//home/hp-ubuntu/Рабочий стол/pos-frontend/src/**)",
+      "Read(//home/hp-ubuntu/Рабочий стол/pos-frontend/**)",
+      "Bash(rm -rf \"/home/hp-ubuntu/Рабочий стол/pos-server/\" && echo \"pos-server \\(duplicate\\) removed\" && df -h / | tail -1)",
+      "Bash(find /home/hp-ubuntu -size +50M -type f 2>/dev/null | sort)",
+      "Read(//home/hp-ubuntu/**)",
+      "Bash(rm /home/hp-ubuntu/google-chrome-stable_current_amd64.deb /home/hp-ubuntu/google-chrome-stable_current_amd64.deb.1 /home/hp-ubuntu/Загрузки/google-chrome-stable_current_amd64.deb && df -h / | tail -1)",
+      "Bash(wget -q https://nodejs.org/dist/v20.18.0/node-v20.18.0-linux-x64.tar.xz -O node.tar.xz)",
+      "Bash(tar -xf node.tar.xz)",
+      "Bash(rm node.tar.xz)",
+      "Bash(curl -s http://localhost:8000/api/auth/login/ -X POST -H \"Content-Type: application/json\" -d '{\"username\":\"admin\",\"password\":\"admin123\"}')",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('LOGIN OK\\\\naccess token:', d.get\\('access',''\\)[:40]+'...'\\)\")",
+      "Bash(curl -s http://localhost:8000/api/auth/login/ -X POST -H 'Content-Type: application/json' -d '{\"username\":\"admin\",\"password\":\"admin123\"}')",
+      "Bash(curl -s http://localhost:8000/api/products/ -H \"Authorization: Bearer $\\(curl -s http://localhost:8000/api/auth/login/ -X POST -H 'Content-Type: application/json' -d '{\"username\":\"admin\",\"password\":\"admin123\"}')",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Маҳсулотҳо:', len\\(d.get\\('results',d\\)\\) if isinstance\\(d, \\(dict,list\\)\\) else 0, 'дона'\\)\")",
+      "Bash(curl -s -X POST http://localhost:8000/api/auth/token/ -H 'Content-Type: application/json' -d '{\"username\":\"admin\",\"password\":\"admin123\"}')",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/)",
+      "Bash(awk '{print $1, $11, $12}')",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(curl -s -X POST http://localhost:8000/api/auth/login/ -H 'Content-Type: application/json' -d '{\"username\":\"admin\",\"password\":\"admin123\"}')",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Created:', d.get\\('id'\\), d.get\\('username'\\), d.get\\('role'\\)\\)\")",
+      "Bash(curl -s http://localhost:8000/api/menu/)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Products:', len\\(d\\), 'first:', d[0]['name'] if d else 'none'\\)\")",
+      "Bash(python3 -c \"import sys,json; print\\('writeoffs:', json.load\\(sys.stdin\\)\\)\")",
+      "Bash(curl -s \"http://localhost:8000/api/menu/?search=Бургер\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); p=d[0]; print\\('menu product keys:', list\\(p.keys\\(\\)\\)[:8]\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); p=d[0]; print\\('Keys:', list\\(p.keys\\(\\)\\)\\); print\\('modifier_groups:', p.get\\('modifier_groups'\\)\\); print\\('color_stocks:', p.get\\('color_stocks'\\)\\)\")",
+      "Bash(curl -s -X POST http://localhost:8000/api/token/ -H \"Content-Type: application/json\" -d '{\"username\":\"admin\",\"password\":\"admin123\"}')",
+      "Bash(python3 -c ' *)",
+      "Bash(curl -s -o /tmp/tok.json -X POST http://localhost:8000/api/token/ -H \"Content-Type: application/json\" -d '{\"username\":\"admin\",\"password\":\"admin123\"}')",
+      "Bash(curl -s -X POST http://localhost:8000/api/auth/login/ -H \"Content-Type: application/json\" -d '{\"username\":\"admin\",\"password\":\"admin123\"}')",
+      "Bash(python3 -m json.tool)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('OK, role:', d.get\\('user',{}\\).get\\('role'\\)\\)\")",
+      "Bash(curl -s http://localhost:3000)"
+    ],
+    "additionalDirectories": [
+      "/home/hp-ubuntu/Рабочий стол/pos-frontend",
+      "/home/hp-ubuntu/Рабочий стол/pos-server",
+      "/home/hp-ubuntu"
+    ]
+  }
+}

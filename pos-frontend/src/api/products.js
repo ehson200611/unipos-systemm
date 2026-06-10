@@ -1,0 +1,20 @@
+import client from './client'
+
+export const getCategories = () => client.get('/categories/')
+export const createCategory = (data) => client.post('/categories/', data)
+export const updateCategory = (id, data) => client.patch(`/categories/${id}/`, data)
+export const deleteCategory = (id) => client.delete(`/categories/${id}/`)
+
+export const getProducts = (params) => client.get('/products/', { params })
+export const getProduct = (id) => client.get(`/products/${id}/`)
+export const createProduct = (data) => client.post('/products/', data)
+export const updateProduct = (id, data) => client.patch(`/products/${id}/`, data)
+export const deleteProduct = (id) => client.delete(`/products/${id}/`)
+export const toggleProduct = (id) => client.post(`/products/${id}/toggle-active/`)
+export const addStock = (id, data) => client.post(`/products/${id}/add-stock/`, data)
+export const getColorStocks = (id) => client.get(`/products/${id}/color-stocks/`)
+export const addColorStock = (id, data) => client.post(`/products/${id}/add-color-stock/`, data)
+export const getColors = () => client.get('/colors/')
+
+export const getMenu = (params) => client.get('/menu/', { params })
+export const getMenuCategories = () => client.get('/menu/categories/')
