@@ -1,0 +1,1690 @@
+[
+{
+  "model": "products.category",
+  "pk": 17,
+  "fields": {
+    "name": "Классик Баблти",
+    "created_at": "2026-06-14T18:31:58.375Z"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 18,
+  "fields": {
+    "name": "Милкшейк",
+    "created_at": "2026-06-14T18:31:58.378Z"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 19,
+  "fields": {
+    "name": "Йогурт",
+    "created_at": "2026-06-14T18:31:58.380Z"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 20,
+  "fields": {
+    "name": "Мохито",
+    "created_at": "2026-06-14T18:31:58.381Z"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 21,
+  "fields": {
+    "name": "Фруктовый чай",
+    "created_at": "2026-06-14T18:31:58.383Z"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 22,
+  "fields": {
+    "name": "Морской бриз",
+    "created_at": "2026-06-14T18:31:58.385Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 41,
+  "fields": {
+    "name": "Клубничный баблти 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.387Z",
+    "updated_at": "2026-06-14T18:31:58.387Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 42,
+  "fields": {
+    "name": "Клубничный баблти 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.393Z",
+    "updated_at": "2026-06-14T18:31:58.393Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 43,
+  "fields": {
+    "name": "Апельсиновый баблти 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.395Z",
+    "updated_at": "2026-06-14T18:31:58.395Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 44,
+  "fields": {
+    "name": "Апельсиновый баблти 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.397Z",
+    "updated_at": "2026-06-14T18:31:58.397Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 45,
+  "fields": {
+    "name": "Виноградный баблти 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.400Z",
+    "updated_at": "2026-06-14T18:31:58.400Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 46,
+  "fields": {
+    "name": "Виноградный баблти 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.402Z",
+    "updated_at": "2026-06-14T18:31:58.402Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 47,
+  "fields": {
+    "name": "Персиковый баблти 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.404Z",
+    "updated_at": "2026-06-14T18:31:58.404Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 48,
+  "fields": {
+    "name": "Персиковый баблти 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.406Z",
+    "updated_at": "2026-06-14T18:31:58.406Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 49,
+  "fields": {
+    "name": "Черничный баблти 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.408Z",
+    "updated_at": "2026-06-14T18:31:58.408Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 50,
+  "fields": {
+    "name": "Черничный баблти 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.411Z",
+    "updated_at": "2026-06-14T18:31:58.411Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 51,
+  "fields": {
+    "name": "Маракуйя баблти 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.413Z",
+    "updated_at": "2026-06-14T18:31:58.413Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 52,
+  "fields": {
+    "name": "Маракуйя баблти 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.415Z",
+    "updated_at": "2026-06-14T18:31:58.415Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 53,
+  "fields": {
+    "name": "Ананасовый баблти 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.417Z",
+    "updated_at": "2026-06-14T18:31:58.417Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 54,
+  "fields": {
+    "name": "Ананасовый баблти 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.419Z",
+    "updated_at": "2026-06-14T18:31:58.419Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 55,
+  "fields": {
+    "name": "Манговый баблти 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.421Z",
+    "updated_at": "2026-06-14T18:31:58.421Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 56,
+  "fields": {
+    "name": "Манговый баблти 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.424Z",
+    "updated_at": "2026-06-14T18:31:58.424Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 57,
+  "fields": {
+    "name": "Манго-Маракуйя микс 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.426Z",
+    "updated_at": "2026-06-14T18:31:58.426Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 58,
+  "fields": {
+    "name": "Манго-Маракуйя микс 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 17,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.428Z",
+    "updated_at": "2026-06-14T18:31:58.428Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 59,
+  "fields": {
+    "name": "Ананасовый милкшейк 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 18,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.430Z",
+    "updated_at": "2026-06-14T18:31:58.430Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 60,
+  "fields": {
+    "name": "Ананасовый милкшейк 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 18,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.432Z",
+    "updated_at": "2026-06-14T18:31:58.432Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 61,
+  "fields": {
+    "name": "Персиковый милкшейк 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 18,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.434Z",
+    "updated_at": "2026-06-14T18:31:58.434Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 62,
+  "fields": {
+    "name": "Персиковый милкшейк 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 18,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.436Z",
+    "updated_at": "2026-06-14T18:31:58.436Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 63,
+  "fields": {
+    "name": "Манговый милкшейк 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 18,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.438Z",
+    "updated_at": "2026-06-14T18:31:58.438Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 64,
+  "fields": {
+    "name": "Манговый милкшейк 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 18,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.441Z",
+    "updated_at": "2026-06-14T18:31:58.441Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 65,
+  "fields": {
+    "name": "Черника милкшейк 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 18,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.443Z",
+    "updated_at": "2026-06-14T18:31:58.443Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 66,
+  "fields": {
+    "name": "Черника милкшейк 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 18,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.445Z",
+    "updated_at": "2026-06-14T18:31:58.445Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 67,
+  "fields": {
+    "name": "Апельсиновый милкшейк 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 18,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.447Z",
+    "updated_at": "2026-06-14T18:31:58.447Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 68,
+  "fields": {
+    "name": "Апельсиновый милкшейк 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 18,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.449Z",
+    "updated_at": "2026-06-14T18:31:58.449Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 69,
+  "fields": {
+    "name": "Клубничный милкшейк 0.5л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 18,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.452Z",
+    "updated_at": "2026-06-14T18:31:58.452Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 70,
+  "fields": {
+    "name": "Клубничный милкшейк 0.7л",
+    "price": "35.00",
+    "stock_quantity": 0,
+    "category": 18,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.454Z",
+    "updated_at": "2026-06-14T18:31:58.454Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 71,
+  "fields": {
+    "name": "Черника йогурт 0.5л",
+    "price": "40.00",
+    "stock_quantity": 0,
+    "category": 19,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.457Z",
+    "updated_at": "2026-06-14T18:31:58.457Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 72,
+  "fields": {
+    "name": "Черника йогурт 0.7л",
+    "price": "50.00",
+    "stock_quantity": 0,
+    "category": 19,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.459Z",
+    "updated_at": "2026-06-14T18:31:58.459Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 73,
+  "fields": {
+    "name": "Клубника йогурт 0.5л",
+    "price": "40.00",
+    "stock_quantity": 0,
+    "category": 19,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.462Z",
+    "updated_at": "2026-06-14T18:31:58.462Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 74,
+  "fields": {
+    "name": "Клубника йогурт 0.7л",
+    "price": "50.00",
+    "stock_quantity": 0,
+    "category": 19,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.464Z",
+    "updated_at": "2026-06-14T18:31:58.464Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 75,
+  "fields": {
+    "name": "Манго йогурт 0.5л",
+    "price": "40.00",
+    "stock_quantity": 0,
+    "category": 19,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.466Z",
+    "updated_at": "2026-06-14T18:31:58.466Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 76,
+  "fields": {
+    "name": "Манго йогурт 0.7л",
+    "price": "50.00",
+    "stock_quantity": 0,
+    "category": 19,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.469Z",
+    "updated_at": "2026-06-14T18:31:58.469Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 77,
+  "fields": {
+    "name": "Классик Мохито 0.5л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 20,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.471Z",
+    "updated_at": "2026-06-14T18:31:58.472Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 78,
+  "fields": {
+    "name": "Классик Мохито 0.7л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 20,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.474Z",
+    "updated_at": "2026-06-14T18:31:58.474Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 79,
+  "fields": {
+    "name": "Малина Мохито 0.5л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 20,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.477Z",
+    "updated_at": "2026-06-14T18:31:58.477Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 80,
+  "fields": {
+    "name": "Малина Мохито 0.7л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 20,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.479Z",
+    "updated_at": "2026-06-14T18:31:58.479Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 81,
+  "fields": {
+    "name": "Морской Бриз Мохито 0.5л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 20,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.482Z",
+    "updated_at": "2026-06-14T18:31:58.482Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 82,
+  "fields": {
+    "name": "Морской Бриз Мохито 0.7л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 20,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.486Z",
+    "updated_at": "2026-06-14T18:31:58.486Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 83,
+  "fields": {
+    "name": "Киви Мохито 0.5л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 20,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.490Z",
+    "updated_at": "2026-06-14T18:31:58.490Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 84,
+  "fields": {
+    "name": "Киви Мохито 0.7л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 20,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.494Z",
+    "updated_at": "2026-06-14T18:31:58.494Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 85,
+  "fields": {
+    "name": "Клубничный Взрыв 0.5л",
+    "price": "20.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.497Z",
+    "updated_at": "2026-06-14T18:31:58.497Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 86,
+  "fields": {
+    "name": "Клубничный Взрыв 0.7л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.500Z",
+    "updated_at": "2026-06-14T18:31:58.501Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 87,
+  "fields": {
+    "name": "Солнечный Апельсин 0.5л",
+    "price": "20.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.504Z",
+    "updated_at": "2026-06-14T18:31:58.504Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 88,
+  "fields": {
+    "name": "Солнечный Апельсин 0.7л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.507Z",
+    "updated_at": "2026-06-14T18:31:58.507Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 89,
+  "fields": {
+    "name": "Виноградный Восторг 0.5л",
+    "price": "20.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.510Z",
+    "updated_at": "2026-06-14T18:31:58.510Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 90,
+  "fields": {
+    "name": "Виноградный Восторг 0.7л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.513Z",
+    "updated_at": "2026-06-14T18:31:58.513Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 91,
+  "fields": {
+    "name": "Персиковая Радость 0.5л",
+    "price": "20.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.517Z",
+    "updated_at": "2026-06-14T18:31:58.517Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 92,
+  "fields": {
+    "name": "Персиковая Радость 0.7л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.520Z",
+    "updated_at": "2026-06-14T18:31:58.520Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 93,
+  "fields": {
+    "name": "Ягодный Черничный Бум 0.5л",
+    "price": "20.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.523Z",
+    "updated_at": "2026-06-14T18:31:58.523Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 94,
+  "fields": {
+    "name": "Ягодный Черничный Бум 0.7л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.527Z",
+    "updated_at": "2026-06-14T18:31:58.527Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 95,
+  "fields": {
+    "name": "Тропическая Маракуйя Боба 0.5л",
+    "price": "20.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.531Z",
+    "updated_at": "2026-06-14T18:31:58.531Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 96,
+  "fields": {
+    "name": "Тропическая Маракуйя Боба 0.7л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.534Z",
+    "updated_at": "2026-06-14T18:31:58.534Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 97,
+  "fields": {
+    "name": "Сочный Ананас Взрыв 0.5л",
+    "price": "20.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.538Z",
+    "updated_at": "2026-06-14T18:31:58.538Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 98,
+  "fields": {
+    "name": "Сочный Ананас Взрыв 0.7л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.542Z",
+    "updated_at": "2026-06-14T18:31:58.542Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 99,
+  "fields": {
+    "name": "Манговый Сюрприз 0.5л",
+    "price": "20.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.546Z",
+    "updated_at": "2026-06-14T18:31:58.546Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 100,
+  "fields": {
+    "name": "Манговый Сюрприз 0.7л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.549Z",
+    "updated_at": "2026-06-14T18:31:58.549Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 101,
+  "fields": {
+    "name": "Лимон Лайм 0.7л",
+    "price": "15.00",
+    "stock_quantity": 0,
+    "category": 21,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.553Z",
+    "updated_at": "2026-06-14T18:31:58.553Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 102,
+  "fields": {
+    "name": "Морской бриз 0.5л",
+    "price": "25.00",
+    "stock_quantity": 0,
+    "category": 22,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.557Z",
+    "updated_at": "2026-06-14T18:31:58.557Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 103,
+  "fields": {
+    "name": "Морской бриз 0.7л",
+    "price": "30.00",
+    "stock_quantity": 0,
+    "category": 22,
+    "image": "",
+    "sku": "",
+    "is_active": true,
+    "is_ingredient": false,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:31:58.560Z",
+    "updated_at": "2026-06-14T18:31:58.560Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 104,
+  "fields": {
+    "name": "tapioka",
+    "price": "1.00",
+    "stock_quantity": 0,
+    "category": null,
+    "image": "",
+    "sku": "кг",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:45:43.906Z",
+    "updated_at": "2026-06-14T18:59:40.990Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 105,
+  "fields": {
+    "name": "Шири тоза",
+    "price": "1.00",
+    "stock_quantity": 5000,
+    "category": null,
+    "image": "",
+    "sku": "мл",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.623Z",
+    "updated_at": "2026-06-14T18:47:21.623Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 106,
+  "fields": {
+    "name": "Ширинии қанд",
+    "price": "1.00",
+    "stock_quantity": 2000,
+    "category": null,
+    "image": "",
+    "sku": "гр",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.630Z",
+    "updated_at": "2026-06-14T18:47:21.630Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 107,
+  "fields": {
+    "name": "Тапиока (pearls)",
+    "price": "1.00",
+    "stock_quantity": 1000,
+    "category": null,
+    "image": "",
+    "sku": "гр",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.632Z",
+    "updated_at": "2026-06-14T18:47:21.632Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 108,
+  "fields": {
+    "name": "Шираи Тут (Strawberry)",
+    "price": "1.00",
+    "stock_quantity": 1500,
+    "category": null,
+    "image": "",
+    "sku": "мл",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.634Z",
+    "updated_at": "2026-06-14T18:47:21.634Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 109,
+  "fields": {
+    "name": "Шираи Анбия (Mango)",
+    "price": "1.00",
+    "stock_quantity": 1500,
+    "category": null,
+    "image": "",
+    "sku": "мл",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.637Z",
+    "updated_at": "2026-06-14T18:47:21.637Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 110,
+  "fields": {
+    "name": "Шираи Шафтолу (Peach)",
+    "price": "1.00",
+    "stock_quantity": 1000,
+    "category": null,
+    "image": "",
+    "sku": "мл",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.639Z",
+    "updated_at": "2026-06-14T18:47:21.639Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 111,
+  "fields": {
+    "name": "Шираи Кокос (Coconut)",
+    "price": "1.00",
+    "stock_quantity": 800,
+    "category": null,
+    "image": "",
+    "sku": "мл",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.642Z",
+    "updated_at": "2026-06-14T18:47:21.642Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 112,
+  "fields": {
+    "name": "Шираи Тарбуз (Watermelon)",
+    "price": "1.00",
+    "stock_quantity": 1200,
+    "category": null,
+    "image": "",
+    "sku": "мл",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.644Z",
+    "updated_at": "2026-06-14T18:47:21.644Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 113,
+  "fields": {
+    "name": "Чойи Сиёҳ (Black Tea)",
+    "price": "1.00",
+    "stock_quantity": 500,
+    "category": null,
+    "image": "",
+    "sku": "гр",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.647Z",
+    "updated_at": "2026-06-14T18:47:21.647Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 114,
+  "fields": {
+    "name": "Чойи Яшил (Green Tea)",
+    "price": "1.00",
+    "stock_quantity": 500,
+    "category": null,
+    "image": "",
+    "sku": "гр",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.649Z",
+    "updated_at": "2026-06-14T18:47:21.649Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 115,
+  "fields": {
+    "name": "Яхи майда (Ice)",
+    "price": "1.00",
+    "stock_quantity": 10000,
+    "category": null,
+    "image": "",
+    "sku": "гр",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.651Z",
+    "updated_at": "2026-06-14T18:47:21.651Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 116,
+  "fields": {
+    "name": "Пена (Foam cream)",
+    "price": "1.00",
+    "stock_quantity": 2000,
+    "category": null,
+    "image": "",
+    "sku": "мл",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.654Z",
+    "updated_at": "2026-06-14T18:47:21.654Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 117,
+  "fields": {
+    "name": "Шоколади тира (Cocoa)",
+    "price": "1.00",
+    "stock_quantity": 800,
+    "category": null,
+    "image": "",
+    "sku": "гр",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.657Z",
+    "updated_at": "2026-06-14T18:47:21.657Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 118,
+  "fields": {
+    "name": "Тамтами ширин (Brown Sugar)",
+    "price": "1.00",
+    "stock_quantity": 1500,
+    "category": null,
+    "image": "",
+    "sku": "гр",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.659Z",
+    "updated_at": "2026-06-14T18:47:21.659Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 119,
+  "fields": {
+    "name": "Кослеси кокос (Coconut milk)",
+    "price": "1.00",
+    "stock_quantity": 1000,
+    "category": null,
+    "image": "",
+    "sku": "мл",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.662Z",
+    "updated_at": "2026-06-14T18:47:21.662Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 120,
+  "fields": {
+    "name": "Пластмасса коса (стакан)",
+    "price": "1.00",
+    "stock_quantity": 200,
+    "category": null,
+    "image": "",
+    "sku": "дона",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.664Z",
+    "updated_at": "2026-06-14T18:47:21.664Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 121,
+  "fields": {
+    "name": "Қопқоқ (крышка)",
+    "price": "1.00",
+    "stock_quantity": 200,
+    "category": null,
+    "image": "",
+    "sku": "дона",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.666Z",
+    "updated_at": "2026-06-14T18:47:21.666Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 122,
+  "fields": {
+    "name": "Тинка (трубочка)",
+    "price": "1.00",
+    "stock_quantity": 300,
+    "category": null,
+    "image": "",
+    "sku": "дона",
+    "is_active": true,
+    "is_ingredient": true,
+    "description": "",
+    "discount_price": null,
+    "cost_price": null,
+    "ingredients_text": [],
+    "created_at": "2026-06-14T18:47:21.669Z",
+    "updated_at": "2026-06-14T18:47:21.669Z"
+  }
+}
+]
