@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getProducts, getCategories, createProduct, updateProduct, deleteProduct, getRecipe, saveRecipe, getIngredients } from '../api/products'
-import { Plus, Edit, Trash2, Search, X, Package, FlaskConical, BookOpen, Loader } from 'lucide-react'
+import { Plus, Edit, Trash2, Search, X, Package, FlaskConical, BookOpen, Loader, ImagePlus } from 'lucide-react'
 import { GridSkeleton } from '../components/Skeleton'
 import { useToast } from '../components/Toast'
 import useSettingsStore from '../store/useSettingsStore'
@@ -163,19 +163,29 @@ function Modal({ product, categories, onSave, onClose, toast, lang }) {
     is_ingredient: product?.is_ingredient ?? false,
     sku: product?.sku || '',
   })
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(product?.image_url || product?.image || null)
   const [saving, setSaving] = useState(false)
   const f = (k) => ({ value: form[k], onChange: (e) => setForm({ ...form, [k]: e.target.value }) })
+
+  const handleImage = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
+  }
 
   const submit = async (e) => {
     e.preventDefault()
     setSaving(true)
     try {
-      const data = { ...form }
-      if (!data.cost_price) delete data.cost_price
-      if (!data.discount_price) delete data.discount_price
-      if (!data.category) delete data.category
-      if (product) await updateProduct(product.id, data)
-      else await createProduct(data)
+      const fd = new FormData()
+      Object.entries(form).forEach(([k, v]) => {
+        if (v !== '' && v !== null && v !== undefined) fd.append(k, v)
+      })
+      if (imageFile) fd.append('image', imageFile)
+      if (product) await updateProduct(product.id, fd)
+      else await createProduct(fd)
       toast(product ? t(lang, 'products_updated') : t(lang, 'products_created'))
       onSave()
     } catch (e) {
@@ -195,6 +205,28 @@ function Modal({ product, categories, onSave, onClose, toast, lang }) {
           </button>
         </div>
         <form onSubmit={submit} className="p-6 space-y-4">
+          {/* Image upload */}
+          <div>
+            <label className="label">{t(lang, 'products_image') || 'Акс'}</label>
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <div className="w-20 h-20 rounded-2xl border-2 border-dashed border-gray-200 group-hover:border-indigo-400 flex items-center justify-center overflow-hidden shrink-0 transition-all bg-gray-50">
+                {imagePreview
+                  ? <img src={imagePreview} alt="" className="w-full h-full object-cover" />
+                  : <ImagePlus size={22} className="text-gray-300 group-hover:text-indigo-400 transition-colors" />
+                }
+              </div>
+              <div>
+                <p className="text-sm font-medium text-indigo-600 group-hover:underline">Аксро интихоб кунед</p>
+                <p className="text-xs text-gray-400 mt-0.5">JPG, PNG · то 5 МБ</p>
+                {imagePreview && (
+                  <button type="button" onClick={(e) => { e.preventDefault(); setImageFile(null); setImagePreview(null) }}
+                    className="text-xs text-red-400 hover:text-red-600 mt-1">Нест кунед</button>
+                )}
+              </div>
+              <input type="file" accept="image/*" className="hidden" onChange={handleImage} />
+            </label>
+          </div>
+
           <div><label className="label">{t(lang, 'products_name')}</label><input className="input" required {...f('name')} /></div>
 
           {!form.is_ingredient && (
@@ -353,8 +385,8 @@ export default function Products() {
             const profit = p.cost_price ? (Number(p.price) - Number(p.cost_price)).toFixed(2) : null
             return (
               <div key={p.id} className={`animate-fade-up bg-white rounded-2xl border overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group ${!p.is_active ? 'opacity-60' : 'border-gray-100 hover:border-indigo-100'}`}>
-                {p.image ? (
-                  <img src={p.image} alt={p.name} className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300" />
+                {(p.image_url || p.image) ? (
+                  <img src={p.image_url || p.image} alt={p.name} className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300" />
                 ) : (
                   <div className="w-full h-36 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                     <Package size={36} className="text-gray-300" />

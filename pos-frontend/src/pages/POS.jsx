@@ -501,8 +501,8 @@ export default function POS() {
                   className="w-full bg-white border-2 border-gray-100 rounded-2xl overflow-hidden text-left hover:border-indigo-400 hover:shadow-xl transition-all duration-200 group active:scale-[0.97]"
                 >
                   <div className="relative">
-                    {p.image ? (
-                      <img src={p.image} alt={p.name} className={`w-full object-cover group-hover:scale-105 transition-transform duration-300 ${isFastFood ? 'h-36' : 'h-28'}`} />
+                    {(p.image_url || p.image) ? (
+                      <img src={p.image_url || p.image} alt={p.name} className={`w-full object-cover group-hover:scale-105 transition-transform duration-300 ${isFastFood ? 'h-36' : 'h-28'}`} />
                     ) : (
                       <div className={`w-full flex items-center justify-center ${isFastFood ? 'h-36' : 'h-28'}`}
                         style={{ background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)' }}>
