@@ -3,6 +3,7 @@ name: Deploy to Server
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -12,36 +13,53 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to server via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build frontend
+        working-directory: pos-frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: 5.42.113.132
           username: root
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          password: ${{ secrets.SERVER_PASSWORD }}
           timeout: 300s
           script: |
             set -e
             APP_DIR="/opt/bubbletea"
 
-            # ── Clone or pull ──────────────────────────────────
+            echo "=== Setup dependencies ==="
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update -qq
+            apt-get install -y -qq git python3 python3-pip python3-venv nginx curl
+
+            # Node.js 20
+            if ! node -v 2>/dev/null | grep -q "v2[0-9]"; then
+              curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+              apt-get install -y -qq nodejs
+            fi
+
+            # Add deploy SSH key for future use
+            mkdir -p ~/.ssh
+            echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOegf1HZV8AYdqxLbA3+AaLAN5U0/68kGNvtW3fbGYvy github-actions-deploy" >> ~/.ssh/authorized_keys
+            sort -u ~/.ssh/authorized_keys -o ~/.ssh/authorized_keys
+            chmod 600 ~/.ssh/authorized_keys
+
+            echo "=== Clone / update repo ==="
             if [ -d "$APP_DIR/.git" ]; then
-              cd "$APP_DIR"
-              git fetch origin main
-              git reset --hard origin/main
+              cd "$APP_DIR" && git fetch origin main && git reset --hard origin/main
             else
-              apt-get update -y -q
-              apt-get install -y -q git python3 python3-pip python3-venv nginx curl
               git clone https://github.com/ehson200611/unipos-systemm.git "$APP_DIR"
-              cd "$APP_DIR"
             fi
 
-            # ── Node.js ───────────────────────────────────────
-            if ! command -v node &>/dev/null || [ "$(node -v | cut -d. -f1 | tr -d v)" -lt 18 ]; then
-              curl -fsSL https://deb.nodesource.com/setup_20.x | bash - -q
-              apt-get install -y -q nodejs
-            fi
-
-            # ── Backend ───────────────────────────────────────
+            echo "=== Backend setup ==="
             cd "$APP_DIR/pos-server"
             python3 -m venv .venv
             source .venv/bin/activate
@@ -49,7 +67,7 @@ jobs:
             pip install -q -r requirements.txt
 
             cat > .env << 'ENVEOF'
-            SECRET_KEY=bubbletea-prod-secret-key-2024-secure
+            SECRET_KEY=bubbletea-prod-2024-xK9mP2qR7vN
             DEBUG=False
             ALLOWED_HOSTS=5.42.113.132,localhost,127.0.0.1
             DB_ENGINE=sqlite
@@ -67,10 +85,13 @@ jobs:
                 u = U.objects.create_superuser('admin', 'admin@bubbletea.tj', 'admin123')
                 u.role = 'admin'
                 u.save()
+                print('Admin created: admin / admin123')
+            else:
+                print('Admin exists')
             "
             deactivate
 
-            # ── Gunicorn systemd ──────────────────────────────
+            echo "=== Gunicorn service ==="
             cat > /etc/systemd/system/bubbletea.service << SVCEOF
             [Unit]
             Description=Bubble Tea POS Backend
@@ -78,9 +99,10 @@ jobs:
 
             [Service]
             WorkingDirectory=$APP_DIR/pos-server
-            ExecStart=$APP_DIR/pos-server/.venv/bin/gunicorn config.wsgi:application --bind 127.0.0.1:8000 --workers 3
+            ExecStart=$APP_DIR/pos-server/.venv/bin/gunicorn config.wsgi:application --bind 127.0.0.1:8000 --workers 3 --timeout 60
             Restart=always
             RestartSec=3
+            Environment=DJANGO_SETTINGS_MODULE=config.settings
 
             [Install]
             WantedBy=multi-user.target
@@ -89,44 +111,52 @@ jobs:
             systemctl daemon-reload
             systemctl enable bubbletea
             systemctl restart bubbletea
+            sleep 2
+            systemctl is-active bubbletea && echo "Backend: OK" || echo "Backend: FAILED"
 
-            # ── Frontend ──────────────────────────────────────
+            echo "=== Frontend ==="
             cd "$APP_DIR/pos-frontend"
-            npm install --silent
+            npm ci --silent
             npm run build
 
-            # ── Nginx ─────────────────────────────────────────
-            cat > /etc/nginx/sites-available/bubbletea << NGINXEOF
+            echo "=== Nginx ==="
+            cat > /etc/nginx/sites-available/bubbletea << 'NGINXEOF'
             server {
-                listen 80;
-                server_name 5.42.113.132;
+                listen 80 default_server;
+                server_name _;
 
-                root $APP_DIR/pos-frontend/dist;
+                root /opt/bubbletea/pos-frontend/dist;
                 index index.html;
 
                 location / {
-                    try_files \$uri \$uri/ /index.html;
+                    try_files $uri $uri/ /index.html;
                 }
 
                 location /api/ {
                     proxy_pass http://127.0.0.1:8000;
-                    proxy_set_header Host \$host;
-                    proxy_set_header X-Real-IP \$remote_addr;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_read_timeout 60;
                 }
 
                 location /admin/ {
                     proxy_pass http://127.0.0.1:8000;
-                    proxy_set_header Host \$host;
+                    proxy_set_header Host $host;
                 }
 
                 location /static/ {
-                    alias $APP_DIR/pos-server/staticfiles/;
+                    alias /opt/bubbletea/pos-server/staticfiles/;
                 }
             }
             NGINXEOF
 
-            ln -sf /etc/nginx/sites-available/bubbletea /etc/nginx/sites-enabled/bubbletea
             rm -f /etc/nginx/sites-enabled/default
+            ln -sf /etc/nginx/sites-available/bubbletea /etc/nginx/sites-enabled/bubbletea
             nginx -t && systemctl restart nginx
 
-            echo "=== DEPLOY COMPLETE === http://5.42.113.132"
+            echo ""
+            echo "============================================"
+            echo "  DEPLOY COMPLETE!"
+            echo "  Site:  http://5.42.113.132"
+            echo "  Login: admin / admin123"
+            echo "============================================"
