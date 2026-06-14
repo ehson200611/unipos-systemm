@@ -195,6 +195,7 @@ export default function POS() {
   const [tableNumber, setTableNumber] = useState('')
   const [barcodeMode, setBarcodeMode] = useState(false)
   const [barcodeVal, setBarcodeVal] = useState('')
+  const [cashReceived, setCashReceived] = useState('')
   const barcodeRef = useRef(null)
   const searchRef = useRef(null)
   const [qrOpen, setQrOpen] = useState(false)
@@ -299,6 +300,7 @@ export default function POS() {
       setCart([])
       setDiscount('')
       setTableNumber('')
+      setCashReceived('')
     } catch (e) { toast(e.response?.data?.detail || t(lang, 'pos_error'), 'error') }
     finally { setLoading(false) }
   }
@@ -630,6 +632,39 @@ export default function POS() {
               <div className="flex items-center justify-between px-1">
                 <span className="text-xs text-gray-400">{t(lang, 'pos_discount_lbl')}</span>
                 <span className="text-xs font-semibold text-red-500">−{fmt(discountNum)} {t(lang, 'currency')}</span>
+              </div>
+            )}
+
+            {/* Cash received + change */}
+            {payment === 'cash' && cart.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Banknote size={14} className="text-emerald-500 shrink-0" />
+                  <input
+                    className="input py-2 text-sm flex-1"
+                    type="number"
+                    min="0"
+                    placeholder={t(lang, 'pos_cash_received_ph')}
+                    value={cashReceived}
+                    onChange={(e) => setCashReceived(e.target.value)}
+                  />
+                </div>
+                {parseFloat(cashReceived) >= total && (
+                  <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5">
+                    <span className="text-sm font-semibold text-emerald-700">{t(lang, 'pos_change_lbl')}</span>
+                    <span className="text-xl font-black text-emerald-600">
+                      {fmt(parseFloat(cashReceived) - total)} {t(lang, 'currency')}
+                    </span>
+                  </div>
+                )}
+                {cashReceived && parseFloat(cashReceived) < total && (
+                  <div className="flex items-center justify-between bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+                    <span className="text-sm font-semibold text-red-600">Кам аст</span>
+                    <span className="text-xl font-black text-red-500">
+                      −{fmt(total - parseFloat(cashReceived))} {t(lang, 'currency')}
+                    </span>
+                  </div>
+                )}
               </div>
             )}
 
