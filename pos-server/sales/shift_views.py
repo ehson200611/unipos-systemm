@@ -108,10 +108,13 @@ class CloseShiftView(APIView):
 
 
 class ShiftListView(APIView):
-    permission_classes = [IsManagerOrAdmin]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        shifts = Shift.objects.all()[:30]
+        if request.user.role == 'cashier':
+            shifts = Shift.objects.filter(opened_by=request.user)[:30]
+        else:
+            shifts = Shift.objects.all()[:30]
         return Response([serialize_shift(s, include_summary=(s.status == 'closed')) for s in shifts])
 
 

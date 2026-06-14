@@ -197,6 +197,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                     product=product,
                     ingredient=ing,
                     quantity=line['quantity'],
+                    unit=line.get('unit', 'гр'),
                 )
         lines_qs = ProductIngredient.objects.filter(product=product).select_related('ingredient')
         return Response(ProductIngredientReadSerializer(lines_qs, many=True).data)

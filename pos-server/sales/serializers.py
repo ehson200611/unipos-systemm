@@ -90,12 +90,15 @@ class SaleCreateSerializer(serializers.Serializer):
                 prod_lock.stock_quantity -= qty
                 prod_lock.save(update_fields=['stock_quantity', 'updated_at'])
 
-            # Deduct recipe ingredients (техкарта) — if product has ingredient lines
-            from products.models import ProductIngredient
+            # Deduct recipe ingredients with unit conversion
+            from products.models import ProductIngredient, convert_units
             for line in ProductIngredient.objects.filter(product=product).select_related('ingredient'):
                 ing = Product.objects.select_for_update(of=('self',)).get(id=line.ingredient_id)
-                need = line.quantity * qty
-                ing.stock_quantity = max(0, (ing.stock_quantity or 0) - need)
+                recipe_qty = float(line.quantity) * qty
+                warehouse_unit = ing.sku or 'дона'
+                recipe_unit = line.unit or warehouse_unit
+                deduct = convert_units(recipe_qty, recipe_unit, warehouse_unit)
+                ing.stock_quantity = max(0, float(ing.stock_quantity or 0) - deduct)
                 ing.save(update_fields=['stock_quantity', 'updated_at'])
 
             item_objects.append({

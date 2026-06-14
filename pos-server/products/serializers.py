@@ -42,12 +42,13 @@ class ProductIngredientReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductIngredient
-        fields = ['id', 'ingredient', 'ingredient_name', 'quantity']
+        fields = ['id', 'ingredient', 'ingredient_name', 'quantity', 'unit']
 
 
 class RecipeLineInputSerializer(serializers.Serializer):
     ingredient_id = serializers.IntegerField(min_value=1)
-    quantity = serializers.IntegerField(min_value=1)
+    quantity = serializers.FloatField(min_value=0.001)
+    unit = serializers.CharField(max_length=10, required=False, default='гр')
 
 
 class ColorStockSerializer(serializers.ModelSerializer):

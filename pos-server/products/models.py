@@ -34,7 +34,7 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=200)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock_quantity = models.IntegerField(default=0)
+    stock_quantity = models.FloatField(default=0)
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -188,13 +188,41 @@ class StocktakeLine(models.Model):
         return f'#{self.session_id}: {self.product.name} sys={self.system_qty} act={self.actual_qty}'
 
 
+UNIT_CHOICES = [
+    ('гр',   'Грамм (гр)'),
+    ('кг',   'Килограмм (кг)'),
+    ('мл',   'Миллилитр (мл)'),
+    ('л',    'Литр (л)'),
+    ('дона', 'Дона (шт)'),
+]
+
+UNIT_TO_BASE = {
+    'гр':   ('кг',   0.001),
+    'кг':   ('кг',   1.0),
+    'мл':   ('л',    0.001),
+    'л':    ('л',    1.0),
+    'дона': ('дона', 1.0),
+}
+
+def convert_units(amount, from_unit, to_unit):
+    """Конвертация воҳидҳо: масалан 200 гр → 0.2 кг"""
+    if from_unit == to_unit:
+        return amount
+    conversions = {
+        ('гр', 'кг'): 0.001, ('кг', 'гр'): 1000,
+        ('мл', 'л'): 0.001,  ('л', 'мл'): 1000,
+        ('гр', 'мл'): 1.0,   ('мл', 'гр'): 1.0,  # приблизительно
+    }
+    return amount * conversions.get((from_unit, to_unit), 1.0)
+
+
 class ProductIngredient(models.Model):
-    """Граммовка: аз як маҳсулот чанд грам аз компонент меравад (склад)."""
+    """Граммовка: аз як маҳсулот чанд воҳид аз компонент меравад (склад)."""
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
         related_name='recipe_lines',
-        help_text='Маҳсулоти натиҷа (масалан бургер)',
+        help_text='Маҳсулоти натиҷа',
     )
     ingredient = models.ForeignKey(
         Product,
@@ -202,7 +230,8 @@ class ProductIngredient(models.Model):
         related_name='used_as_ingredient_in',
         help_text='Компонент / хоммаҳсулот',
     )
-    quantity = models.IntegerField(default=1)
+    quantity = models.FloatField(default=1)
+    unit = models.CharField(max_length=10, choices=UNIT_CHOICES, default='гр', help_text='Воҳиди андозагирӣ дар рецепт')
 
     class Meta:
         ordering = ['product_id', 'ingredient_id']

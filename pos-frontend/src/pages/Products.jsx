@@ -18,6 +18,8 @@ function RecipeModal({ product, onClose }) {
   const [saving, setSaving] = useState(false)
   const [pickedIngId, setPickedIngId] = useState('')
   const [pickedQty, setPickedQty] = useState(1)
+  const [pickedUnit, setPickedUnit] = useState('гр')
+  const UNITS = ['гр', 'кг', 'мл', 'л', 'дона']
 
   useEffect(() => {
     Promise.all([getRecipe(product.id), getIngredients()])
@@ -29,26 +31,29 @@ function RecipeModal({ product, onClose }) {
   }, [product.id])
 
   const addLine = () => {
-    if (!pickedIngId || pickedQty < 1) return
+    if (!pickedIngId || pickedQty < 0.001) return
     const ing = allIngredients.find((i) => i.id === Number(pickedIngId))
     if (!ing) return
     if (recipe.find((r) => r.ingredient === ing.id)) {
       toast('Ин ингредиент аллакай илова шудааст', 'warning')
       return
     }
-    setRecipe([...recipe, { ingredient: ing.id, ingredient_name: ing.name, quantity: Number(pickedQty), unit: ing.sku || 'дона' }])
+    setRecipe([...recipe, { ingredient: ing.id, ingredient_name: ing.name, quantity: Number(pickedQty), unit: pickedUnit }])
     setPickedIngId('')
     setPickedQty(1)
+    setPickedUnit('гр')
   }
 
   const removeLine = (ingId) => setRecipe(recipe.filter((r) => r.ingredient !== ingId))
 
   const updateQty = (ingId, val) => setRecipe(recipe.map((r) => r.ingredient === ingId ? { ...r, quantity: Number(val) } : r))
 
+  const updateUnit = (ingId, val) => setRecipe(recipe.map((r) => r.ingredient === ingId ? { ...r, unit: val } : r))
+
   const submit = async () => {
     setSaving(true)
     try {
-      const lines = recipe.map((r) => ({ ingredient_id: r.ingredient, quantity: r.quantity }))
+      const lines = recipe.map((r) => ({ ingredient_id: r.ingredient, quantity: r.quantity, unit: r.unit || 'гр' }))
       await saveRecipe(product.id, { lines })
       toast(`"${product.name}" рецепти нигоҳ шуд`, 'success')
       onClose()
@@ -84,8 +89,8 @@ function RecipeModal({ product, onClose }) {
           ) : (
             <>
               {/* Add ingredient row */}
-              <div className="flex gap-2 items-end">
-                <div className="flex-1">
+              <div className="flex gap-2 items-end flex-wrap">
+                <div className="flex-1 min-w-32">
                   <label className="label">Ингредиент</label>
                   <select className="input" value={pickedIngId} onChange={(e) => setPickedIngId(e.target.value)}>
                     <option value="">— Ингредиентро интихоб кунед —</option>
@@ -94,10 +99,16 @@ function RecipeModal({ product, onClose }) {
                     ))}
                   </select>
                 </div>
-                <div className="w-28">
+                <div className="w-24">
                   <label className="label">Миқдор</label>
-                  <input className="input" type="number" min="1" value={pickedQty}
+                  <input className="input" type="number" min="0.001" step="0.1" value={pickedQty}
                     onChange={(e) => setPickedQty(e.target.value)} />
+                </div>
+                <div className="w-20">
+                  <label className="label">Воҳид</label>
+                  <select className="input" value={pickedUnit} onChange={(e) => setPickedUnit(e.target.value)}>
+                    {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
+                  </select>
                 </div>
                 <button onClick={addLine}
                   className="h-10 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium flex items-center gap-1 transition-all shrink-0">
@@ -118,12 +129,18 @@ function RecipeModal({ product, onClose }) {
                       <FlaskConical size={15} className="text-violet-400 shrink-0" />
                       <span className="flex-1 text-sm font-medium text-gray-700">{r.ingredient_name}</span>
                       <input
-                        type="number" min="1"
+                        type="number" min="0.001" step="0.1"
                         value={r.quantity}
                         onChange={(e) => updateQty(r.ingredient, e.target.value)}
                         className="w-20 text-center border border-gray-200 rounded-lg py-1 text-sm font-bold focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 outline-none"
                       />
-                      <span className="text-xs text-gray-400 w-8 text-left">{r.unit}</span>
+                      <select
+                        value={r.unit || 'гр'}
+                        onChange={(e) => updateUnit(r.ingredient, e.target.value)}
+                        className="text-xs border border-gray-200 rounded-lg py-1 px-1 text-gray-600 focus:ring-2 focus:ring-indigo-300 outline-none w-16"
+                      >
+                        {['гр', 'кг', 'мл', 'л', 'дона'].map((u) => <option key={u} value={u}>{u}</option>)}
+                      </select>
                       <button onClick={() => removeLine(r.ingredient)}
                         className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-300 hover:text-red-400 transition-all">
                         <X size={13} />

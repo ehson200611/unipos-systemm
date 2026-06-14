@@ -8,7 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -20,143 +19,36 @@ jobs:
 
       - name: Build frontend
         working-directory: pos-frontend
-        run: |
-          npm ci
-          npm run build
+        run: npm ci && npm run build
 
-      - name: Deploy to server
+      - name: Deploy via SSH port 443
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: 5.42.113.132
           username: root
-          password: ${{ secrets.SERVER_PASSWORD }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: 443
           timeout: 300s
           script: |
             set -e
-            APP_DIR="/opt/bubbletea"
+            cd /opt/bubbletea
 
-            echo "=== Setup dependencies ==="
-            export DEBIAN_FRONTEND=noninteractive
-            apt-get update -qq
-            apt-get install -y -qq git python3 python3-pip python3-venv nginx curl
+            echo "=== Git pull ==="
+            git fetch origin main && git reset --hard origin/main
 
-            # Node.js 20
-            if ! node -v 2>/dev/null | grep -q "v2[0-9]"; then
-              curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-              apt-get install -y -qq nodejs
-            fi
-
-            # Add deploy SSH key for future use
-            mkdir -p ~/.ssh
-            echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOegf1HZV8AYdqxLbA3+AaLAN5U0/68kGNvtW3fbGYvy github-actions-deploy" >> ~/.ssh/authorized_keys
-            sort -u ~/.ssh/authorized_keys -o ~/.ssh/authorized_keys
-            chmod 600 ~/.ssh/authorized_keys
-
-            echo "=== Clone / update repo ==="
-            if [ -d "$APP_DIR/.git" ]; then
-              cd "$APP_DIR" && git fetch origin main && git reset --hard origin/main
-            else
-              git clone https://github.com/ehson200611/unipos-systemm.git "$APP_DIR"
-            fi
-
-            echo "=== Backend setup ==="
-            cd "$APP_DIR/pos-server"
-            python3 -m venv .venv
+            echo "=== Backend ==="
+            cd pos-server
             source .venv/bin/activate
-            pip install -q --upgrade pip
             pip install -q -r requirements.txt
-
-            cat > .env << 'ENVEOF'
-            SECRET_KEY=bubbletea-prod-2024-xK9mP2qR7vN
-            DEBUG=False
-            ALLOWED_HOSTS=5.42.113.132,localhost,127.0.0.1
-            DB_ENGINE=sqlite
-            CORS_ALLOW_ALL=True
-            CORS_ALLOWED_ORIGINS=http://5.42.113.132
-            ENVEOF
-
             python manage.py migrate --noinput
             python manage.py collectstatic --noinput
-
-            python manage.py shell -c "
-            from django.contrib.auth import get_user_model
-            U = get_user_model()
-            if not U.objects.filter(username='admin').exists():
-                u = U.objects.create_superuser('admin', 'admin@bubbletea.tj', 'admin123')
-                u.role = 'admin'
-                u.save()
-                print('Admin created: admin / admin123')
-            else:
-                print('Admin exists')
-            "
             deactivate
 
-            echo "=== Gunicorn service ==="
-            cat > /etc/systemd/system/bubbletea.service << SVCEOF
-            [Unit]
-            Description=Bubble Tea POS Backend
-            After=network.target
-
-            [Service]
-            WorkingDirectory=$APP_DIR/pos-server
-            ExecStart=$APP_DIR/pos-server/.venv/bin/gunicorn config.wsgi:application --bind 127.0.0.1:8000 --workers 3 --timeout 60
-            Restart=always
-            RestartSec=3
-            Environment=DJANGO_SETTINGS_MODULE=config.settings
-
-            [Install]
-            WantedBy=multi-user.target
-            SVCEOF
-
-            systemctl daemon-reload
-            systemctl enable bubbletea
-            systemctl restart bubbletea
-            sleep 2
-            systemctl is-active bubbletea && echo "Backend: OK" || echo "Backend: FAILED"
-
             echo "=== Frontend ==="
-            cd "$APP_DIR/pos-frontend"
+            cd /opt/bubbletea/pos-frontend
             npm ci --silent
             npm run build
 
-            echo "=== Nginx ==="
-            cat > /etc/nginx/sites-available/bubbletea << 'NGINXEOF'
-            server {
-                listen 80 default_server;
-                server_name _;
-
-                root /opt/bubbletea/pos-frontend/dist;
-                index index.html;
-
-                location / {
-                    try_files $uri $uri/ /index.html;
-                }
-
-                location /api/ {
-                    proxy_pass http://127.0.0.1:8000;
-                    proxy_set_header Host $host;
-                    proxy_set_header X-Real-IP $remote_addr;
-                    proxy_read_timeout 60;
-                }
-
-                location /admin/ {
-                    proxy_pass http://127.0.0.1:8000;
-                    proxy_set_header Host $host;
-                }
-
-                location /static/ {
-                    alias /opt/bubbletea/pos-server/staticfiles/;
-                }
-            }
-            NGINXEOF
-
-            rm -f /etc/nginx/sites-enabled/default
-            ln -sf /etc/nginx/sites-available/bubbletea /etc/nginx/sites-enabled/bubbletea
-            nginx -t && systemctl restart nginx
-
-            echo ""
-            echo "============================================"
-            echo "  DEPLOY COMPLETE!"
-            echo "  Site:  http://5.42.113.132"
-            echo "  Login: admin / admin123"
-            echo "============================================"
+            echo "=== Restart ==="
+            systemctl restart bubbletea nginx
+            echo "DEPLOY OK!"
