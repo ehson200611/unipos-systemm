@@ -330,6 +330,71 @@ export default function POS() {
       />
     )}
     {splitOpen && <SplitModal cart={cart} total={total} lang={lang} onClose={() => setSplitOpen(false)} />}
+
+    {/* Numpad Modal */}
+    {numpadOpen && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setNumpadOpen(false)}>
+        <div className="bg-white rounded-3xl shadow-2xl w-72 p-5 animate-scale-in" onClick={(e) => e.stopPropagation()}>
+          {/* Header */}
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-sm font-bold text-gray-500">{t(lang, 'pos_cash_received_ph')}</p>
+            <button onClick={() => setNumpadOpen(false)} className="text-gray-400 hover:text-gray-600 w-7 h-7 flex items-center justify-center rounded-xl hover:bg-gray-100">
+              <X size={15} />
+            </button>
+          </div>
+          {/* Display */}
+          <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl px-4 py-3 mb-1 text-right">
+            <p className="text-3xl font-black text-emerald-700 tracking-tight min-h-[2.5rem]">
+              {cashReceived || '0'}
+            </p>
+            <p className="text-xs text-emerald-500 mt-0.5">{t(lang, 'currency')}</p>
+          </div>
+          {/* Change preview */}
+          {cashReceived && parseFloat(cashReceived) >= total ? (
+            <div className="flex justify-between items-center px-1 mb-3">
+              <span className="text-xs text-emerald-600 font-semibold">{t(lang, 'pos_change_lbl')}</span>
+              <span className="text-base font-black text-emerald-600">{fmt(parseFloat(cashReceived) - total)} {t(lang, 'currency')}</span>
+            </div>
+          ) : cashReceived && parseFloat(cashReceived) < total ? (
+            <div className="flex justify-between items-center px-1 mb-3">
+              <span className="text-xs text-red-500 font-semibold">Кам аст</span>
+              <span className="text-base font-black text-red-500">−{fmt(total - parseFloat(cashReceived))} {t(lang, 'currency')}</span>
+            </div>
+          ) : <div className="mb-3 h-5" />}
+          {/* Keys */}
+          <div className="grid grid-cols-3 gap-2">
+            {['7','8','9','4','5','6','1','2','3'].map((k) => (
+              <button key={k} type="button"
+                onClick={() => setCashReceived((v) => v + k)}
+                className="h-12 rounded-2xl bg-gray-50 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 text-xl font-bold text-gray-700 transition-all shadow-sm">
+                {k}
+              </button>
+            ))}
+            <button type="button"
+              onClick={() => setCashReceived((v) => (!v.includes('.') ? v + '.' : v))}
+              className="h-12 rounded-2xl bg-gray-50 hover:bg-gray-100 active:scale-95 text-xl font-bold text-gray-400 transition-all shadow-sm">
+              .
+            </button>
+            <button type="button"
+              onClick={() => setCashReceived((v) => v + '0')}
+              className="h-12 rounded-2xl bg-gray-50 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 text-xl font-bold text-gray-700 transition-all shadow-sm">
+              0
+            </button>
+            <button type="button"
+              onClick={() => setCashReceived((v) => v.slice(0, -1))}
+              className="h-12 rounded-2xl bg-red-50 hover:bg-red-100 active:scale-95 text-lg font-bold text-red-400 transition-all shadow-sm">
+              ⌫
+            </button>
+          </div>
+          {/* OK */}
+          <button type="button"
+            onClick={() => setNumpadOpen(false)}
+            className="mt-3 w-full h-12 rounded-2xl bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white font-black text-base transition-all shadow-md">
+            OK
+          </button>
+        </div>
+      </div>
+    )}
     {qrOpen && payment === 'card_alif' && settings.qrAlif && (
       <QrModal label="Alif Mobi" qrSrc={settings.qrAlif} total={total} lang={lang} onClose={() => setQrOpen(false)} />
     )}
@@ -637,72 +702,29 @@ export default function POS() {
               </div>
             )}
 
-            {/* Cash received + numpad + change */}
+            {/* Cash received row */}
             {payment === 'cash' && cart.length > 0 && (
               <div className="space-y-2">
-                {/* Display + open numpad */}
                 <button
                   type="button"
-                  onClick={() => setNumpadOpen((v) => !v)}
+                  onClick={() => setNumpadOpen(true)}
                   className="w-full flex items-center gap-2 border-2 border-emerald-300 bg-emerald-50 hover:border-emerald-400 rounded-xl px-3.5 py-2.5 transition-all"
                 >
                   <Banknote size={15} className="text-emerald-500 shrink-0" />
                   <span className={`flex-1 text-left text-sm font-semibold ${cashReceived ? 'text-emerald-700' : 'text-gray-400'}`}>
                     {cashReceived ? `${cashReceived} ${t(lang, 'currency')}` : t(lang, 'pos_cash_received_ph')}
                   </span>
-                  <span className="text-xs text-emerald-500 font-bold">{numpadOpen ? '▲' : '▼'}</span>
                 </button>
-
-                {/* Numpad */}
-                {numpadOpen && (
-                  <div className="bg-white border border-gray-200 rounded-2xl p-3 shadow-lg animate-scale-in">
-                    <div className="grid grid-cols-3 gap-1.5">
-                      {['7','8','9','4','5','6','1','2','3'].map((k) => (
-                        <button key={k} type="button"
-                          onClick={() => setCashReceived((v) => v === '0' ? k : v + k)}
-                          className="h-11 rounded-xl bg-gray-50 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 text-lg font-bold text-gray-700 transition-all border border-gray-100">
-                          {k}
-                        </button>
-                      ))}
-                      <button type="button"
-                        onClick={() => setCashReceived((v) => (!v.includes('.') ? v + '.' : v))}
-                        className="h-11 rounded-xl bg-gray-50 hover:bg-indigo-50 active:scale-95 text-lg font-bold text-gray-500 transition-all border border-gray-100">
-                        .
-                      </button>
-                      <button type="button"
-                        onClick={() => setCashReceived((v) => v === '0' ? '0' : v + '0')}
-                        className="h-11 rounded-xl bg-gray-50 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 text-lg font-bold text-gray-700 transition-all border border-gray-100">
-                        0
-                      </button>
-                      <button type="button"
-                        onClick={() => setCashReceived((v) => v.slice(0, -1))}
-                        className="h-11 rounded-xl bg-red-50 hover:bg-red-100 active:scale-95 text-base font-bold text-red-500 transition-all border border-red-100">
-                        ⌫
-                      </button>
-                    </div>
-                    <button type="button"
-                      onClick={() => setCashReceived('')}
-                      className="mt-1.5 w-full h-9 rounded-xl bg-gray-100 hover:bg-gray-200 text-xs font-bold text-gray-500 transition-all">
-                      Тоза кардан
-                    </button>
-                  </div>
-                )}
-
-                {/* Change */}
                 {cashReceived && parseFloat(cashReceived) >= total && (
-                  <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5">
+                  <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2">
                     <span className="text-sm font-semibold text-emerald-700">{t(lang, 'pos_change_lbl')}</span>
-                    <span className="text-xl font-black text-emerald-600">
-                      {fmt(parseFloat(cashReceived) - total)} {t(lang, 'currency')}
-                    </span>
+                    <span className="text-lg font-black text-emerald-600">{fmt(parseFloat(cashReceived) - total)} {t(lang, 'currency')}</span>
                   </div>
                 )}
                 {cashReceived && parseFloat(cashReceived) < total && (
-                  <div className="flex items-center justify-between bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+                  <div className="flex items-center justify-between bg-red-50 border border-red-200 rounded-xl px-4 py-2">
                     <span className="text-sm font-semibold text-red-600">Кам аст</span>
-                    <span className="text-xl font-black text-red-500">
-                      −{fmt(total - parseFloat(cashReceived))} {t(lang, 'currency')}
-                    </span>
+                    <span className="text-lg font-black text-red-500">−{fmt(total - parseFloat(cashReceived))} {t(lang, 'currency')}</span>
                   </div>
                 )}
               </div>
