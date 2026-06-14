@@ -2,30 +2,33 @@ import { useEffect, useState, useCallback } from 'react'
 import { getSales, markPreparing, markReady, markServed } from '../api/sales'
 import { ChefHat, Clock, CheckCircle, RefreshCw, Utensils, Bell, Table2 } from 'lucide-react'
 import { useToast } from '../components/Toast'
-
-const STATUS_CONFIG = {
-  pending:   { label: 'Нав',        color: 'bg-amber-50 border-amber-300',   badge: 'bg-amber-500',   text: 'text-amber-700',   next: 'preparing', nextLabel: 'Пухтан оғоз кунед' },
-  preparing: { label: 'Пухта шуда', color: 'bg-blue-50 border-blue-300',    badge: 'bg-blue-500',    text: 'text-blue-700',    next: 'ready',     nextLabel: 'Тайёр' },
-  ready:     { label: 'Тайёр',      color: 'bg-emerald-50 border-emerald-300', badge: 'bg-emerald-500', text: 'text-emerald-700', next: 'served',    nextLabel: 'Хизмат расонида шуд' },
-}
+import useSettingsStore from '../store/useSettingsStore'
+import { t } from '../lib/i18n'
 
 const fmt = (s) => {
   const d = new Date(s)
   return d.toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' })
 }
 
-const elapsed = (s) => {
-  const diff = Math.floor((Date.now() - new Date(s).getTime()) / 60000)
-  return diff < 1 ? 'Ҳозир' : `${diff} дақ`
-}
-
 export default function Kitchen() {
   const toast = useToast()
+  const { language: lang = 'tg' } = useSettingsStore()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('pending')
   const [updating, setUpdating] = useState(null)
   const [tick, setTick] = useState(0)
+
+  const elapsed = (s) => {
+    const diff = Math.floor((Date.now() - new Date(s).getTime()) / 60000)
+    return diff < 1 ? t(lang, 'kitchen_elapsed_now') : `${diff} ${t(lang, 'kitchen_elapsed_min')}`
+  }
+
+  const getStatusConfig = () => ({
+    pending:   { label: t(lang, 'kitchen_status_new'),     color: 'bg-amber-50 border-amber-300',   badge: 'bg-amber-500',   text: 'text-amber-700',   next: 'preparing', nextLabel: t(lang, 'kitchen_act_start') },
+    preparing: { label: t(lang, 'kitchen_status_cooking'), color: 'bg-blue-50 border-blue-300',    badge: 'bg-blue-500',    text: 'text-blue-700',    next: 'ready',     nextLabel: t(lang, 'kitchen_act_ready') },
+    ready:     { label: t(lang, 'kitchen_status_ready'),   color: 'bg-emerald-50 border-emerald-300', badge: 'bg-emerald-500', text: 'text-emerald-700', next: 'served',    nextLabel: t(lang, 'kitchen_act_served') },
+  })
 
   const load = useCallback(async (quiet = false) => {
     if (!quiet) setLoading(true)
@@ -42,13 +45,13 @@ export default function Kitchen() {
 
   // Auto refresh every 15 seconds
   useEffect(() => {
-    const id = setInterval(() => { load(true); setTick((t) => t + 1) }, 15000)
+    const id = setInterval(() => { load(true); setTick((tk) => tk + 1) }, 15000)
     return () => clearInterval(id)
   }, [load])
 
   // Elapsed time re-render every minute
   useEffect(() => {
-    const id = setInterval(() => setTick((t) => t + 1), 60000)
+    const id = setInterval(() => setTick((tk) => tk + 1), 60000)
     return () => clearInterval(id)
   }, [])
 
@@ -64,12 +67,13 @@ export default function Kitchen() {
           .map((o) => o.id === saleId ? { ...o, status: newStatus } : o)
           .filter((o) => newStatus !== 'served' || o.id !== saleId)
       )
-      if (newStatus === 'served') toast('Фармоиш хизмат расонида шуд', 'success')
-      else if (newStatus === 'ready') toast('Фармоиш тайёр аст!', 'success')
-    } catch { toast('Хатогӣ рӯй дод', 'error') }
+      if (newStatus === 'served') toast(t(lang, 'kitchen_served_toast'), 'success')
+      else if (newStatus === 'ready') toast(t(lang, 'kitchen_ready_toast'), 'success')
+    } catch { toast(t(lang, 'kitchen_error'), 'error') }
     finally { setUpdating(null) }
   }
 
+  const STATUS_CONFIG = getStatusConfig()
   const shown = orders.filter((o) => o.status === tab)
   const counts = {
     pending:   orders.filter((o) => o.status === 'pending').length,
@@ -90,13 +94,13 @@ export default function Kitchen() {
             <ChefHat size={20} className="text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-800">Ошхона монитор</h1>
-            <p className="text-xs text-gray-400">Навсозии худкор: ҳар 15 сония</p>
+            <h1 className="text-xl font-bold text-gray-800">{t(lang, 'kitchen_title')}</h1>
+            <p className="text-xs text-gray-400">{t(lang, 'kitchen_auto_refresh')}</p>
           </div>
         </div>
         <button onClick={() => load()} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium transition-all">
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-          Нав кардан
+          {t(lang, 'kitchen_refresh')}
         </button>
       </div>
 
@@ -139,8 +143,8 @@ export default function Kitchen() {
       ) : shown.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-gray-400 animate-fade-up">
           <Utensils size={40} className="mb-3 opacity-20" />
-          <p className="font-medium">Фармоише нест</p>
-          <p className="text-xs mt-1 opacity-60">{STATUS_CONFIG[tab].label} ҳолати бо фармоиш нест</p>
+          <p className="font-medium">{t(lang, 'kitchen_no_orders')}</p>
+          <p className="text-xs mt-1 opacity-60">{STATUS_CONFIG[tab].label} {t(lang, 'kitchen_status_empty')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

@@ -4,7 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from accounts.permissions import IsManagerOrAdmin
 
-SETTINGS_FILE = '/opt/pos-server/app_settings.json'
+import pathlib
+SETTINGS_FILE = str(pathlib.Path(__file__).resolve().parent.parent / 'app_settings.json')
 
 def _load():
     if os.path.exists(SETTINGS_FILE):

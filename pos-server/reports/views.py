@@ -1,4 +1,5 @@
 from rest_framework.views import APIView
+from rest_framework import viewsets, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Sum, Count, F
@@ -9,6 +10,86 @@ from datetime import timedelta, date
 from sales.models import Sale, SaleItem
 from accounts.models import User
 from accounts.permissions import IsManagerOrAdmin
+from .models import Expense
+
+
+class ExpenseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = Expense
+        fields = '__all__'
+        read_only_fields = ['created_by', 'created_at']
+
+
+class ExpenseViewSet(viewsets.ModelViewSet):
+    queryset           = Expense.objects.all()
+    serializer_class   = ExpenseSerializer
+    permission_classes = [IsManagerOrAdmin]
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+
+class FinancialReportView(APIView):
+    permission_classes = [IsManagerOrAdmin]
+
+    def get(self, request):
+        days  = int(request.query_params.get('days', 30))
+        since = timezone.localtime().date() - timedelta(days=days)
+
+        sales  = Sale.objects.filter(created_at__date__gte=since).exclude(status__in=['refunded', 'cancelled'])
+        revenue = float(sales.aggregate(t=Sum('total_amount'))['t'] or 0)
+
+        profit = 0
+        for item in SaleItem.objects.filter(sale__in=sales):
+            if item.cost_price is not None:
+                profit += float((item.unit_price - item.cost_price) * item.quantity)
+            else:
+                profit += float(item.line_total)
+
+        expenses = Expense.objects.filter(created_at__date__gte=since)
+        total_expenses = float(expenses.aggregate(t=Sum('amount'))['t'] or 0)
+        net_profit = profit - total_expenses
+
+        by_category = list(
+            expenses.values('category')
+            .annotate(total=Sum('amount'), count=Count('id'))
+            .order_by('-total')
+        )
+
+        daily = (
+            Sale.objects.filter(created_at__date__gte=since)
+            .exclude(status__in=['refunded', 'cancelled'])
+            .annotate(day=TruncDate('created_at'))
+            .values('day')
+            .annotate(revenue=Sum('total_amount'), count=Count('id'))
+            .order_by('day')
+        )
+        daily_expenses = (
+            Expense.objects.filter(created_at__date__gte=since)
+            .annotate(day=TruncDate('created_at'))
+            .values('day')
+            .annotate(expenses=Sum('amount'))
+        )
+        exp_map = {str(e['day']): float(e['expenses'] or 0) for e in daily_expenses}
+
+        chart = [
+            {
+                'date':     str(d['day'])[-5:],
+                'revenue':  float(d['revenue'] or 0),
+                'expenses': exp_map.get(str(d['day']), 0),
+            }
+            for d in daily
+        ]
+
+        return Response({
+            'revenue':       revenue,
+            'profit':        profit,
+            'expenses':      total_expenses,
+            'net_profit':    net_profit,
+            'by_category':   by_category,
+            'chart':         chart,
+            'expense_list':  ExpenseSerializer(expenses.order_by('-created_at')[:20], many=True).data,
+        })
 
 
 class DashboardView(APIView):

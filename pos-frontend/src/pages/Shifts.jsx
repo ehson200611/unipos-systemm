@@ -3,6 +3,8 @@ import { getShifts, openShift, closeShift, getCurrentShift } from '../api/sales'
 import { Clock, Play, Square, Loader, Timer } from 'lucide-react'
 import { TableSkeleton } from '../components/Skeleton'
 import { useToast } from '../components/Toast'
+import useSettingsStore from '../store/useSettingsStore'
+import { t } from '../lib/i18n'
 
 const fmt = (n) => Number(n || 0).toLocaleString('ru', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
@@ -18,6 +20,7 @@ function duration(from, to) {
 
 export default function Shifts() {
   const toast = useToast()
+  const { language: lang = 'tg' } = useSettingsStore()
   const [shifts, setShifts] = useState([])
   const [current, setCurrent] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -43,16 +46,16 @@ export default function Shifts() {
 
   const handleOpen = async () => {
     setActing(true)
-    try { await openShift(); toast('Навбат кушода шуд'); load() }
-    catch (e) { toast(e.response?.data?.detail || 'Хатогӣ', 'error') }
+    try { await openShift(); toast(t(lang, 'shifts_opened')); load() }
+    catch (e) { toast(e.response?.data?.detail || t(lang, 'error'), 'error') }
     finally { setActing(false) }
   }
 
   const handleClose = async () => {
-    if (!confirm('Навбатро мебандем?')) return
+    if (!confirm(t(lang, 'shifts_confirm_close'))) return
     setActing(true)
-    try { await closeShift({}); toast('Навбат банд шуд', 'warning'); load() }
-    catch (e) { toast(e.response?.data?.detail || 'Хатогӣ', 'error') }
+    try { await closeShift({}); toast(t(lang, 'shifts_closed_toast'), 'warning'); load() }
+    catch (e) { toast(e.response?.data?.detail || t(lang, 'error'), 'error') }
     finally { setActing(false) }
   }
 
@@ -62,16 +65,16 @@ export default function Shifts() {
     <div className="space-y-4">
       <div className="flex items-center justify-between animate-fade-up">
         <div>
-          <h1 className="text-xl font-bold text-gray-800">Навбатҳо</h1>
-          <p className="text-sm text-gray-400">Таърихи навбатҳои корӣ</p>
+          <h1 className="text-xl font-bold text-gray-800">{t(lang, 'shifts_title')}</h1>
+          <p className="text-sm text-gray-400">{t(lang, 'shifts_sub')}</p>
         </div>
         {!current ? (
           <button onClick={handleOpen} disabled={acting} className="btn-primary flex items-center gap-2">
-            {acting ? <Loader size={16} className="animate-spin" /> : <Play size={16} />} Навбат кушодан
+            {acting ? <Loader size={16} className="animate-spin" /> : <Play size={16} />} {t(lang, 'shifts_open_btn')}
           </button>
         ) : (
           <button onClick={handleClose} disabled={acting} className="btn-danger flex items-center gap-2">
-            {acting ? <Loader size={16} className="animate-spin" /> : <Square size={16} />} Навбатро банд кардан
+            {acting ? <Loader size={16} className="animate-spin" /> : <Square size={16} />} {t(lang, 'shifts_close_btn')}
           </button>
         )}
       </div>
@@ -83,7 +86,7 @@ export default function Shifts() {
               <span className="w-3 h-3 bg-white rounded-full animate-pulse" />
             </div>
             <div>
-              <p className="font-bold text-lg">Навбат кушода аст</p>
+              <p className="font-bold text-lg">{t(lang, 'shifts_current_open')}</p>
               <p className="text-emerald-100 text-sm">
                 {current.opened_by_name && `${current.opened_by_name} · `}
                 {new Date(current.opened_at).toLocaleString('ru', { hour: '2-digit', minute: '2-digit' })}
@@ -110,9 +113,9 @@ export default function Shifts() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-gray-800">Навбат #{num}</span>
+                      <span className="font-bold text-gray-800">{t(lang, 'shifts_num')}{num}</span>
                       <span className={`badge ${isOpen ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
-                        {isOpen ? 'Кушода' : 'Баста'}
+                        {isOpen ? t(lang, 'shifts_status_open') : t(lang, 'shifts_status_closed')}
                       </span>
                     </div>
                     <p className="text-xs text-gray-400 mt-0.5">
@@ -134,15 +137,15 @@ export default function Shifts() {
                 {!isOpen && shift.summary && (
                   <div className="px-5 pb-4 grid grid-cols-3 gap-3">
                     <div className="bg-gray-50 rounded-xl p-3 text-center">
-                      <p className="text-xs text-gray-500 mb-1">Фурӯш</p>
+                      <p className="text-xs text-gray-500 mb-1">{t(lang, 'shifts_sales')}</p>
                       <p className="text-xl font-bold text-gray-800">{shift.summary.sale_count}</p>
                     </div>
                     <div className="bg-emerald-50 rounded-xl p-3 text-center">
-                      <p className="text-xs text-gray-500 mb-1">Фоида</p>
+                      <p className="text-xs text-gray-500 mb-1">{t(lang, 'shifts_profit')}</p>
                       <p className="text-sm font-bold text-emerald-600">{fmt(shift.summary.total_profit)} сомони</p>
                     </div>
                     <div className="bg-indigo-50 rounded-xl p-3 text-center">
-                      <p className="text-xs text-gray-500 mb-1">Кушода</p>
+                      <p className="text-xs text-gray-500 mb-1">{t(lang, 'shifts_opened_by')}</p>
                       <p className="text-sm font-bold text-indigo-700 truncate">{shift.opened_by_name || '—'}</p>
                     </div>
                   </div>
@@ -153,7 +156,7 @@ export default function Shifts() {
           {!allShifts.length && (
             <div className="text-center py-16 text-gray-400">
               <Clock size={36} className="mx-auto mb-3 opacity-20" />
-              <p>Таърихи навбат нест</p>
+              <p>{t(lang, 'shifts_no_history')}</p>
             </div>
           )}
         </div>

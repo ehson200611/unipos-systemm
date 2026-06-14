@@ -10,20 +10,23 @@ import {
   LayoutDashboard, ShoppingCart, Package, Warehouse, Grid3X3,
   ClipboardList, Clock, Users, BarChart2, Settings, LogOut,
   AlertCircle, Timer, Menu, ChevronLeft, ChefHat, PackageCheck,
-  LayoutGrid, SlidersHorizontal, ClipboardCheck, Store
+  LayoutGrid, SlidersHorizontal, ClipboardCheck,
+  UserCircle, Truck
 } from 'lucide-react'
 
 const BASE_NAV = [
   { to: '/',           icon: LayoutDashboard,   lk: 'nav_dashboard',  roles: ['admin','manager','cashier','chef','assembler'], color: 'bg-blue-500' },
   { to: '/pos',        icon: ShoppingCart,      lk: 'nav_pos',        roles: ['admin','manager','cashier'],                    color: 'bg-emerald-500' },
-  { to: '/table-map',  icon: LayoutGrid,        lk: 'nav_table_map',  roles: ['admin','manager','cashier'],                    color: 'bg-sky-500',    fastfoodOnly: true },
-  { to: '/kitchen',    icon: ChefHat,           lk: 'nav_kitchen',    roles: ['admin','manager','chef'],                       color: 'bg-orange-500', fastfoodOnly: true },
-  { to: '/assembler',  icon: PackageCheck,      lk: 'nav_assembler',  roles: ['admin','manager','assembler'],                  color: 'bg-teal-500',   fastfoodOnly: true },
+  { to: '/table-map',  icon: LayoutGrid,        lk: 'nav_table_map',  roles: ['admin','manager','cashier'],                    color: 'bg-sky-500' },
+  { to: '/kitchen',    icon: ChefHat,           lk: 'nav_kitchen',    roles: ['admin','manager','chef'],                       color: 'bg-orange-500' },
+  { to: '/assembler',  icon: PackageCheck,      lk: 'nav_assembler',  roles: ['admin','manager','assembler'],                  color: 'bg-teal-500' },
+  { to: '/customers',  icon: UserCircle,        lk: 'nav_customers',  roles: ['admin','manager','cashier'],                    color: 'bg-indigo-500' },
   { to: '/products',   icon: Package,           lk: 'nav_products',   roles: ['admin','manager'],                              color: 'bg-orange-500' },
-  { to: '/modifiers',  icon: SlidersHorizontal, lk: 'nav_modifiers',  roles: ['admin','manager'],                              color: 'bg-purple-500', fastfoodOnly: true },
-  { to: '/warehouse',  icon: Warehouse,         lk: 'nav_warehouse',  roles: ['admin','manager'],                              color: 'bg-teal-500',   stockAlert: true },
+  { to: '/modifiers',  icon: SlidersHorizontal, lk: 'nav_modifiers',  roles: ['admin','manager'],                              color: 'bg-purple-500' },
+  { to: '/warehouse',  icon: Warehouse,         lk: 'nav_warehouse',  roles: ['admin','manager'],                              color: 'bg-teal-500',  stockAlert: true },
   { to: '/stocktake',  icon: ClipboardCheck,    lk: 'nav_stocktake',  roles: ['admin','manager'],                              color: 'bg-violet-500' },
   { to: '/categories', icon: Grid3X3,           lk: 'nav_categories', roles: ['admin','manager'],                              color: 'bg-violet-500' },
+  { to: '/suppliers',  icon: Truck,             lk: 'nav_suppliers',  roles: ['admin','manager'],                              color: 'bg-teal-600' },
   { to: '/orders',     icon: ClipboardList,     lk: 'nav_orders',     roles: ['admin','manager','cashier','chef','assembler'],  color: 'bg-amber-500' },
   { to: '/shifts',     icon: Clock,             lk: 'nav_shifts',     roles: ['admin','manager','cashier'],                    color: 'bg-indigo-500' },
   { to: '/workers',    icon: Users,             lk: 'nav_workers',    roles: ['admin'],                                        color: 'bg-rose-500' },
@@ -89,14 +92,9 @@ export default function Layout({ children }) {
     finally { setClosingShift(false) }
   }
 
-  const isFastFood = settings.businessType === 'fastfood'
   const initials = ((user?.first_name?.[0] || '') + (user?.last_name?.[0] || '')).toUpperCase() || user?.username?.[0]?.toUpperCase() || '?'
 
-  const visibleNav = BASE_NAV.filter((n) => {
-    if (!n.roles.includes(user?.role)) return false
-    if (n.fastfoodOnly && !isFastFood) return false
-    return true
-  })
+  const visibleNav = BASE_NAV.filter((n) => n.roles.includes(user?.role))
 
   const logoSrc = settings.logoBase64
 
@@ -125,12 +123,8 @@ export default function Layout({ children }) {
               className="w-9 h-9 rounded-xl object-cover shrink-0 shadow-lg ring-1 ring-white/20"
             />
           ) : (
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-lg ${
-              isFastFood
-                ? 'bg-gradient-to-br from-orange-500 to-red-500 shadow-orange-500/30'
-                : 'bg-gradient-to-br from-indigo-500 to-blue-500 shadow-indigo-500/30'
-            }`}>
-              {isFastFood ? <ChefHat size={17} className="text-white" /> : <Store size={17} className="text-white" />}
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-lg bg-gradient-to-br from-pink-500 to-purple-500 shadow-pink-500/30 text-lg">
+              🧋
             </div>
           )}
           <div className="min-w-0 flex-1">

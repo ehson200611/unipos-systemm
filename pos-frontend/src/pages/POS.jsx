@@ -8,9 +8,10 @@ import {
 import { useToast } from '../components/Toast'
 import Receipt from '../components/Receipt'
 import useSettingsStore, { BUSINESS_TYPES } from '../store/useSettingsStore'
+import { t } from '../lib/i18n'
 
 // ── QR payment modal ──────────────────────────────────────────────────────────
-function QrModal({ label, qrSrc, total, onClose }) {
+function QrModal({ label, qrSrc, total, onClose, lang }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xs animate-scale-in" onClick={(e) => e.stopPropagation()}>
@@ -24,21 +25,21 @@ function QrModal({ label, qrSrc, total, onClose }) {
           </button>
         </div>
         <div className="px-5 pb-2 mt-1">
-          <p className="text-xs text-gray-400">Ба мизоч нишон диҳед</p>
+          <p className="text-xs text-gray-400">{t(lang, 'pos_qr_show')}</p>
         </div>
         <div className="px-5 pb-5">
           <div className="bg-gray-50 rounded-2xl p-4 flex items-center justify-center">
             <img src={qrSrc} alt="QR" className="w-52 h-52 object-contain" />
           </div>
           <div className="mt-4 bg-indigo-50 rounded-2xl px-4 py-3 flex items-center justify-between">
-            <span className="text-sm text-indigo-600 font-medium">Маблағ</span>
+            <span className="text-sm text-indigo-600 font-medium">{t(lang, 'pos_qr_amount')}</span>
             <span className="text-xl font-black text-indigo-700">
-              {Number(total || 0).toLocaleString('ru', { minimumFractionDigits: 2 })} сом
+              {Number(total || 0).toLocaleString('ru', { minimumFractionDigits: 2 })} {t(lang, 'currency')}
             </span>
           </div>
           <button onClick={onClose}
             className="mt-3 w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition-colors">
-            Пардохт қабул шуд ✓
+            {t(lang, 'pos_qr_confirm')}
           </button>
         </div>
       </div>
@@ -47,7 +48,7 @@ function QrModal({ label, qrSrc, total, onClose }) {
 }
 
 // ── Modifier picker modal ─────────────────────────────────────────────────────
-function ModifierModal({ product, onConfirm, onClose }) {
+function ModifierModal({ product, onConfirm, onClose, lang }) {
   const [selected, setSelected] = useState({})  // { groupId: [modifierId, ...] }
 
   const toggle = (group, mod) => {
@@ -89,8 +90,8 @@ function ModifierModal({ product, onConfirm, onClose }) {
             <div key={group.id}>
               <div className="flex items-center gap-2 mb-2">
                 <p className="text-sm font-bold text-gray-700">{group.name}</p>
-                {group.required && <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-bold">Ҳатмист</span>}
-                {group.max_select > 1 && <span className="text-[10px] text-gray-400">ҳадди аксар {group.max_select}</span>}
+                {group.required && <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-bold">{t(lang, 'pos_modifier_required')}</span>}
+                {group.max_select > 1 && <span className="text-[10px] text-gray-400">{t(lang, 'pos_modifier_max')} {group.max_select}</span>}
               </div>
               <div className="space-y-1.5">
                 {group.modifiers.filter((m) => m.is_available).map((m) => {
@@ -101,7 +102,7 @@ function ModifierModal({ product, onConfirm, onClose }) {
                         isSelected ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-gray-100 bg-gray-50 hover:border-gray-200 text-gray-700'
                       }`}>
                       <span className="font-medium">{m.name}</span>
-                      <span className="font-bold">{Number(m.price) > 0 ? `+${Number(m.price).toLocaleString('ru')} сом` : 'Ройгон'}</span>
+                      <span className="font-bold">{Number(m.price) > 0 ? `+${Number(m.price).toLocaleString('ru')} ${t(lang, 'currency')}` : t(lang, 'pos_free')}</span>
                     </button>
                   )
                 })}
@@ -112,7 +113,7 @@ function ModifierModal({ product, onConfirm, onClose }) {
         <div className="px-5 pb-5">
           <button disabled={!canConfirm} onClick={() => onConfirm(buildModifiers())}
             className="w-full btn-primary py-3 font-bold disabled:opacity-40">
-            Ба сабад илова кунед
+            {t(lang, 'pos_modifier_add')}
           </button>
         </div>
       </div>
@@ -121,22 +122,22 @@ function ModifierModal({ product, onConfirm, onClose }) {
 }
 
 // ── Split bill modal ──────────────────────────────────────────────────────────
-function SplitModal({ cart, total, onClose }) {
+function SplitModal({ cart, total, onClose, lang }) {
   const [guests, setGuests] = useState(2)
   const share = total / guests
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xs animate-scale-in p-6">
         <div className="flex items-center justify-between mb-5">
-          <p className="font-bold text-gray-800 flex items-center gap-2"><Users size={18} className="text-indigo-500" /> Тақсими ҳисоб</p>
+          <p className="font-bold text-gray-800 flex items-center gap-2"><Users size={18} className="text-indigo-500" /> {t(lang, 'pos_split_title')}</p>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
         </div>
         <div className="bg-indigo-50 rounded-xl px-4 py-3 text-center mb-5">
-          <p className="text-xs text-indigo-500 mb-1">Ҷамъ</p>
-          <p className="text-2xl font-black text-indigo-700">{Number(total).toLocaleString('ru')} сом</p>
+          <p className="text-xs text-indigo-500 mb-1">{t(lang, 'pos_split_total')}</p>
+          <p className="text-2xl font-black text-indigo-700">{Number(total).toLocaleString('ru')} {t(lang, 'currency')}</p>
         </div>
         <div className="mb-5">
-          <label className="label">Шумораи меҳмонон</label>
+          <label className="label">{t(lang, 'pos_split_guests')}</label>
           <div className="flex items-center gap-3">
             <button onClick={() => setGuests(Math.max(2, guests - 1))}
               className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 text-xl font-bold">−</button>
@@ -146,14 +147,14 @@ function SplitModal({ cart, total, onClose }) {
           </div>
         </div>
         <div className="bg-emerald-50 rounded-xl px-4 py-3 text-center mb-4">
-          <p className="text-xs text-emerald-600 mb-1">Ҳар нафар пардохт мекунад</p>
-          <p className="text-3xl font-black text-emerald-700">{Number(share).toLocaleString('ru', { maximumFractionDigits: 2 })} сом</p>
+          <p className="text-xs text-emerald-600 mb-1">{t(lang, 'pos_split_per_person')}</p>
+          <p className="text-3xl font-black text-emerald-700">{Number(share).toLocaleString('ru', { maximumFractionDigits: 2 })} {t(lang, 'currency')}</p>
         </div>
         <div className="space-y-1">
           {Array.from({ length: guests }, (_, i) => (
             <div key={i} className="flex items-center justify-between text-sm text-gray-600 px-2 py-1">
-              <span>Меҳмон {i + 1}</span>
-              <span className="font-bold">{Number(share).toLocaleString('ru', { maximumFractionDigits: 2 })} сом</span>
+              <span>{t(lang, 'pos_split_guest')} {i + 1}</span>
+              <span className="font-bold">{Number(share).toLocaleString('ru', { maximumFractionDigits: 2 })} {t(lang, 'currency')}</span>
             </div>
           ))}
         </div>
@@ -164,19 +165,20 @@ function SplitModal({ cart, total, onClose }) {
 
 const fmt = (n) => Number(n || 0).toLocaleString('ru', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-const PAY = [
-  { value: 'cash',     label: 'Нақд',   icon: Banknote,   active: 'bg-emerald-500' },
-  { value: 'card_alif',label: 'Alif',   icon: Smartphone, active: 'bg-blue-500' },
-  { value: 'card_dc',  label: 'DC Pay', icon: CreditCard, active: 'bg-violet-500' },
-  { value: 'mixed',    label: 'Омехта', icon: Zap,        active: 'bg-orange-500' },
-  { value: 'card',     label: 'Кард',   icon: CreditCard, active: 'bg-gray-600' },
-]
-
 export default function POS() {
   const toast = useToast()
   const settings = useSettingsStore()
+  const { language: lang = 'tg' } = settings
   const biz = BUSINESS_TYPES[settings.businessType]
   const isFastFood = settings.businessType === 'fastfood'
+
+  const PAY = [
+    { value: 'cash',      label: t(lang, 'pay_cash'), icon: Banknote,   active: 'bg-emerald-500' },
+    { value: 'card_alif', label: t(lang, 'pay_alif'), icon: Smartphone, active: 'bg-blue-500' },
+    { value: 'card_dc',   label: t(lang, 'pay_dc'),   icon: CreditCard, active: 'bg-violet-500' },
+    { value: 'mixed',     label: t(lang, 'pay_mixed'),icon: Zap,        active: 'bg-orange-500' },
+    { value: 'card',      label: t(lang, 'pay_card'), icon: CreditCard, active: 'bg-gray-600' },
+  ]
 
   const [categories, setCategories] = useState([])
   const [products, setProducts] = useState([])
@@ -254,13 +256,13 @@ export default function POS() {
       const found = products.find((p) => p.barcode === code || String(p.id) === code)
       if (found) {
         addToCart(found)
-        toast(`${found.name} — сабад илова шуд`, 'success')
+        toast(`${found.name} — ${t(lang, 'pos_scan_added')}`, 'success')
       } else {
-        toast(`Штрихкод «${code}» ёфт нашуд`, 'warning')
+        toast(`«${code}» ${t(lang, 'pos_scan_not_found')}`, 'warning')
       }
       setBarcodeVal('')
     }
-  }, [barcodeVal, products])
+  }, [barcodeVal, products, lang])
 
   const changeQty = (key, d) => {
     setCart((prev) => prev.map((i) => i.key === key ? { ...i, qty: i.qty + d } : i).filter((i) => i.qty > 0))
@@ -297,7 +299,7 @@ export default function POS() {
       setCart([])
       setDiscount('')
       setTableNumber('')
-    } catch (e) { toast(e.response?.data?.detail || 'Хатогӣ', 'error') }
+    } catch (e) { toast(e.response?.data?.detail || t(lang, 'pos_error'), 'error') }
     finally { setLoading(false) }
   }
 
@@ -318,16 +320,17 @@ export default function POS() {
     {modifierTarget && (
       <ModifierModal
         product={modifierTarget.product}
+        lang={lang}
         onConfirm={(mods) => addToCart(modifierTarget.product, modifierTarget.color, mods)}
         onClose={() => setModifierTarget(null)}
       />
     )}
-    {splitOpen && <SplitModal cart={cart} total={total} onClose={() => setSplitOpen(false)} />}
+    {splitOpen && <SplitModal cart={cart} total={total} lang={lang} onClose={() => setSplitOpen(false)} />}
     {qrOpen && payment === 'card_alif' && settings.qrAlif && (
-      <QrModal label="Alif Mobi" qrSrc={settings.qrAlif} total={total} onClose={() => setQrOpen(false)} />
+      <QrModal label="Alif Mobi" qrSrc={settings.qrAlif} total={total} lang={lang} onClose={() => setQrOpen(false)} />
     )}
     {qrOpen && payment === 'card_dc' && settings.qrDcPay && (
-      <QrModal label="DC Pay" qrSrc={settings.qrDcPay} total={total} onClose={() => setQrOpen(false)} />
+      <QrModal label="DC Pay" qrSrc={settings.qrDcPay} total={total} lang={lang} onClose={() => setQrOpen(false)} />
     )}
     <div className="flex gap-4 h-[calc(100vh-7rem)]">
       {/* Left: products */}
@@ -336,13 +339,13 @@ export default function POS() {
         {/* FastFood: table selector at top */}
         {isFastFood && (
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 animate-fade-up">
-            <p className="text-xs font-semibold text-gray-400 mb-2 flex items-center gap-1"><Table2 size={12} /> Миз:</p>
+            <p className="text-xs font-semibold text-gray-400 mb-2 flex items-center gap-1"><Table2 size={12} /> {t(lang, 'pos_table_lbl')}</p>
             <div className="flex flex-wrap gap-1.5">
               <button
                 onClick={() => setTableNumber('')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${!tableNumber ? 'bg-orange-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
               >
-                Баруй
+                {t(lang, 'pos_takeout')}
               </button>
               {Array.from({ length: settings.tableCount }, (_, i) => String(i + 1)).map((n) => (
                 <button
@@ -364,14 +367,14 @@ export default function POS() {
             <input
               ref={searchRef}
               className="input pl-10"
-              placeholder={`${biz.posLabel} ҷустуҷӯ...`}
+              placeholder={`${biz.posLabel} ${t(lang, 'search')}`}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <button
             onClick={() => setBarcodeMode((v) => !v)}
-            title="Штрихкод скан"
+            title={t(lang, 'pos_scan_title')}
             className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center shrink-0 transition-all ${barcodeMode ? 'border-indigo-500 bg-indigo-50 text-indigo-600' : 'border-gray-200 bg-white text-gray-400 hover:border-gray-300'}`}
           >
             <ScanLine size={17} />
@@ -385,7 +388,7 @@ export default function POS() {
             <input
               ref={barcodeRef}
               className="flex-1 bg-transparent outline-none text-sm text-indigo-800 font-mono placeholder:text-indigo-300"
-              placeholder="Штрихкод скан кунед ё ворид кунед..."
+              placeholder={t(lang, 'pos_scan_ph')}
               value={barcodeVal}
               onChange={(e) => setBarcodeVal(e.target.value)}
               onKeyDown={handleBarcodeScan}
@@ -404,7 +407,7 @@ export default function POS() {
               !activeCategory ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
             }`}
           >
-            Ҳама
+            {t(lang, 'pos_all_cat')}
           </button>
           {categories.map((c) => (
             <button
@@ -426,39 +429,59 @@ export default function POS() {
               <div key={p.id} className="relative">
                 <button
                   onClick={() => handleProduct(p)}
-                  className={`w-full bg-white border border-gray-100 rounded-2xl overflow-hidden text-left hover:border-indigo-300 hover:shadow-lg transition-all duration-200 group active:scale-95 ${isFastFood ? '' : ''}`}
+                  className="w-full bg-white border-2 border-gray-100 rounded-2xl overflow-hidden text-left hover:border-indigo-400 hover:shadow-xl transition-all duration-200 group active:scale-[0.97]"
                 >
-                  {p.image ? (
-                    <img src={p.image} alt={p.name} className={`w-full object-cover group-hover:scale-105 transition-transform duration-300 ${isFastFood ? 'h-36' : 'h-32'}`} />
-                  ) : (
-                    <div className={`w-full bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center ${isFastFood ? 'h-36' : 'h-32'}`}>
-                      <span className="text-4xl">{biz.icon}</span>
-                    </div>
-                  )}
-                  <div className="p-2.5">
-                    <p className="text-xs font-semibold text-gray-800 line-clamp-2 leading-tight mb-1">{p.name}</p>
-                    <p className={`font-bold ${isFastFood ? 'text-base text-orange-500' : 'text-sm text-indigo-600'}`}>
-                      {fmt(p.discount_price || p.price)} сом
-                    </p>
-                    {p.discount_price && <p className="text-xs line-through text-gray-300">{fmt(p.price)}</p>}
-                    {!isFastFood && p.stock_quantity <= 3 && p.stock_quantity > 0 && (
-                      <p className="text-[10px] text-amber-500 font-medium mt-0.5">{p.stock_quantity} дона қолмондааст</p>
+                  <div className="relative">
+                    {p.image ? (
+                      <img src={p.image} alt={p.name} className={`w-full object-cover group-hover:scale-105 transition-transform duration-300 ${isFastFood ? 'h-36' : 'h-28'}`} />
+                    ) : (
+                      <div className={`w-full flex items-center justify-center ${isFastFood ? 'h-36' : 'h-28'}`}
+                        style={{ background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)' }}>
+                        <span className="text-4xl opacity-60">{biz.icon}</span>
+                      </div>
                     )}
+                    {p.discount_price && (
+                      <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">{t(lang, 'pos_discount_badge')}</span>
+                    )}
+                    {!isFastFood && p.stock_quantity === 0 && (
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                        <span className="text-white text-xs font-bold bg-black/60 px-3 py-1 rounded-full">{t(lang, 'pos_out_of_stock')}</span>
+                      </div>
+                    )}
+                    <div className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg scale-75 group-hover:scale-100 ${isFastFood ? 'bg-orange-500' : 'bg-indigo-600'}`}>
+                      <Plus size={15} className="text-white" />
+                    </div>
                   </div>
-                  <div className={`absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md ${isFastFood ? 'bg-orange-500' : 'bg-indigo-600'}`}>
-                    <Plus size={14} className="text-white" />
+                  <div className="p-3">
+                    <p className="text-xs font-semibold text-gray-800 line-clamp-2 leading-tight mb-2 min-h-[2rem]">{p.name}</p>
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <p className={`font-black ${isFastFood ? 'text-lg text-orange-500' : 'text-base text-indigo-600'}`}>
+                          {fmt(p.discount_price || p.price)}
+                        </p>
+                        <p className="text-[10px] text-gray-400 -mt-0.5">{t(lang, 'som')}</p>
+                      </div>
+                      {p.discount_price && (
+                        <p className="text-xs line-through text-gray-300 mb-3">{fmt(p.price)}</p>
+                      )}
+                      {!isFastFood && p.stock_quantity <= 5 && p.stock_quantity > 0 && (
+                        <span className="text-[10px] bg-amber-50 text-amber-600 border border-amber-200 px-1.5 py-0.5 rounded-full font-semibold mb-3">
+                          {p.stock_quantity} {t(lang, 'pos_left')}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </button>
 
                 {colorPicker?.id === p.id && (
                   <div className="absolute top-full left-0 right-0 z-20 mt-1 bg-white border border-gray-100 rounded-2xl shadow-2xl p-3 animate-scale-in">
-                    <p className="text-xs text-gray-400 font-medium mb-2">Ранг интихоб кунед:</p>
+                    <p className="text-xs text-gray-400 font-medium mb-2">{t(lang, 'pos_choose_color')}</p>
                     <div className="space-y-1.5">
                       {p.color_stocks.map((cs) => (
                         <button key={cs.color} onClick={() => handleColorSelect(p, cs.color)}
                           className="w-full text-xs px-3 py-2 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-700 rounded-xl transition-colors text-left flex justify-between items-center">
                           <span className="font-medium">{cs.color_label}</span>
-                          <span className="text-gray-400">{cs.quantity} дона</span>
+                          <span className="text-gray-400">{cs.quantity} {t(lang, 'warehouse_pieces')}</span>
                         </button>
                       ))}
                     </div>
@@ -469,7 +492,7 @@ export default function POS() {
             {!products.length && (
               <div className="col-span-full flex flex-col items-center justify-center py-16 text-gray-400">
                 <Search size={36} className="mb-3 opacity-20" />
-                <p>Маҳсулот топилмад</p>
+                <p>{t(lang, 'pos_product_not_found')}</p>
               </div>
             )}
           </div>
@@ -477,16 +500,16 @@ export default function POS() {
       </div>
 
       {/* Right: cart */}
-      <div className="w-72 xl:w-80 flex flex-col gap-3 shrink-0">
+      <div className="w-80 xl:w-96 flex flex-col gap-3 shrink-0">
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex-1 flex flex-col min-h-0 overflow-hidden">
           {/* Cart header */}
           <div className="flex items-center gap-2 px-4 py-3.5 border-b border-gray-100">
             <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${isFastFood ? 'bg-orange-50' : 'bg-indigo-50'}`}>
               <ShoppingCart size={16} className={isFastFood ? 'text-orange-500' : 'text-indigo-600'} />
             </div>
-            <span className="font-bold text-gray-800">Сабад</span>
+            <span className="font-bold text-gray-800">{t(lang, 'pos_cart_title')}</span>
             {tableNumber && (
-              <span className="ml-1 bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded-full font-bold">Миз {tableNumber}</span>
+              <span className="ml-1 bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded-full font-bold">{t(lang, 'pos_cart_table')} {tableNumber}</span>
             )}
             {cart.length > 0 && (
               <span className={`ml-auto text-white text-xs px-2 py-0.5 rounded-full font-bold ${isFastFood ? 'bg-orange-500' : 'bg-indigo-600'}`}>
@@ -500,8 +523,8 @@ export default function POS() {
             {cart.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-gray-400 py-12">
                 <ShoppingCart size={40} className="mb-3 opacity-15" />
-                <p className="text-sm font-medium">Сабад холӣ аст</p>
-                <p className="text-xs mt-1 opacity-60">Маҳсулот интихоб кунед</p>
+                <p className="text-sm font-medium">{t(lang, 'pos_cart_empty')}</p>
+                <p className="text-xs mt-1 opacity-60">{t(lang, 'pos_cart_choose')}</p>
               </div>
             ) : (
               <div className="divide-y divide-gray-50">
@@ -512,7 +535,7 @@ export default function POS() {
                         {item.product.name}
                         {item.color && <span className="text-gray-400 font-normal"> · {item.color}</span>}
                       </p>
-                      <button onClick={() => setCart((p) => p.filter((i) => i.key !== item.key))}
+                      <button onClick={() => setCart((prev) => prev.filter((i) => i.key !== item.key))}
                         className="text-gray-300 hover:text-red-400 shrink-0 transition-colors">
                         <Trash2 size={13} />
                       </button>
@@ -539,7 +562,7 @@ export default function POS() {
                         </button>
                       </div>
                       <span className={`text-sm font-bold ${isFastFood ? 'text-orange-500' : 'text-indigo-600'}`}>
-                        {fmt((item.customPrice ?? Number(item.product.price)) * item.qty)} сом
+                        {fmt((item.customPrice ?? Number(item.product.price)) * item.qty)} {t(lang, 'currency')}
                       </span>
                     </div>
                   </div>
@@ -582,7 +605,7 @@ export default function POS() {
                 <Table2 size={14} className="text-gray-400 shrink-0" />
                 <input
                   className="input py-2 text-sm flex-1"
-                  placeholder="Рақами миз (ихтиёрӣ)"
+                  placeholder={t(lang, 'pos_table_ph')}
                   value={tableNumber}
                   onChange={(e) => setTableNumber(e.target.value)}
                 />
@@ -596,7 +619,7 @@ export default function POS() {
                 className="input py-2 text-sm flex-1"
                 type="number"
                 min="0"
-                placeholder="Тахфиф (сомони)"
+                placeholder={t(lang, 'pos_discount_ph')}
                 value={discount}
                 onChange={(e) => setDiscount(e.target.value)}
               />
@@ -605,8 +628,8 @@ export default function POS() {
             {/* Subtotal + discount */}
             {discountNum > 0 && (
               <div className="flex items-center justify-between px-1">
-                <span className="text-xs text-gray-400">Тахфиф</span>
-                <span className="text-xs font-semibold text-red-500">−{fmt(discountNum)} сом</span>
+                <span className="text-xs text-gray-400">{t(lang, 'pos_discount_lbl')}</span>
+                <span className="text-xs font-semibold text-red-500">−{fmt(discountNum)} {t(lang, 'currency')}</span>
               </div>
             )}
 
@@ -614,24 +637,38 @@ export default function POS() {
             {cart.length > 0 && (
               <button onClick={() => setSplitOpen(true)}
                 className="w-full flex items-center justify-center gap-2 py-2 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 text-xs font-medium transition-all">
-                <Users size={13} /> Ҳисобро тақсим кунед
+                <Users size={13} /> {t(lang, 'pos_split_btn')}
               </button>
             )}
 
             {/* Total */}
-            <div className={`rounded-xl px-4 py-3 flex items-center justify-between ${isFastFood ? 'bg-orange-50' : 'bg-indigo-50'}`}>
-              <span className={`text-sm font-medium ${isFastFood ? 'text-orange-700' : 'text-indigo-700'}`}>Ҳамагӣ</span>
-              <span className={`text-xl font-bold ${isFastFood ? 'text-orange-700' : 'text-indigo-700'}`}>{fmt(total)} сом</span>
+            <div className="rounded-2xl px-4 py-3.5 flex items-center justify-between"
+              style={{ background: isFastFood ? 'linear-gradient(135deg,#fff7ed,#ffedd5)' : 'linear-gradient(135deg,#eef2ff,#e0e7ff)' }}>
+              <div>
+                <p className={`text-xs font-medium ${isFastFood ? 'text-orange-500' : 'text-indigo-400'}`}>{t(lang, 'pos_total_lbl')}</p>
+                <p className={`text-2xl font-black tracking-tight ${isFastFood ? 'text-orange-600' : 'text-indigo-700'}`}>{fmt(total)}</p>
+                <p className={`text-xs -mt-0.5 ${isFastFood ? 'text-orange-400' : 'text-indigo-400'}`}>{t(lang, 'som')}</p>
+              </div>
+              {discountNum > 0 && (
+                <div className="text-right">
+                  <p className="text-[10px] text-gray-400">{t(lang, 'pos_discount_lbl')}</p>
+                  <p className="text-sm font-bold text-red-500">−{fmt(discountNum)}</p>
+                </div>
+              )}
             </div>
 
             <button onClick={handleSale} disabled={loading || !cart.length}
-              className={`w-full py-3.5 text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all text-white shadow-md disabled:opacity-50 disabled:cursor-not-allowed ${
-                isFastFood
-                  ? 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600'
-                  : 'btn-primary'
-              }`}>
-              {loading ? <Loader size={17} className="animate-spin" /> : <CheckCircle size={17} />}
-              {loading ? 'Нигоҳ мешавад...' : isFastFood ? 'Фармоиш қабул кунед' : 'Фурӯшро анҷом диҳед'}
+              className="w-full py-4 text-base font-black flex items-center justify-center gap-2.5 rounded-2xl transition-all text-white disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.97]"
+              style={{
+                background: cart.length
+                  ? isFastFood
+                    ? 'linear-gradient(135deg, #f97316 0%, #ef4444 100%)'
+                    : 'linear-gradient(135deg, #6366f1 0%, #3b82f6 100%)'
+                  : '#e2e8f0',
+                boxShadow: cart.length ? (isFastFood ? '0 8px 24px rgba(249,115,22,0.4)' : '0 8px 24px rgba(99,102,241,0.4)') : 'none',
+              }}>
+              {loading ? <Loader size={18} className="animate-spin" /> : <CheckCircle size={18} />}
+              {loading ? t(lang, 'pos_saving') : isFastFood ? t(lang, 'pos_pay_fastfood') : t(lang, 'pos_pay_pos')}
             </button>
           </div>
         </div>

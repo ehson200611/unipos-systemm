@@ -3,10 +3,12 @@ import { getProducts, getCategories, createProduct, updateProduct, deleteProduct
 import { Plus, Edit, Trash2, Search, X, Package } from 'lucide-react'
 import { GridSkeleton } from '../components/Skeleton'
 import { useToast } from '../components/Toast'
+import useSettingsStore from '../store/useSettingsStore'
+import { t } from '../lib/i18n'
 
 const fmt = (n) => Number(n || 0).toLocaleString('ru', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-function Modal({ product, categories, onSave, onClose, toast }) {
+function Modal({ product, categories, onSave, onClose, toast, lang }) {
   const [form, setForm] = useState({
     name: product?.name || '',
     price: product?.price || '',
@@ -30,9 +32,9 @@ function Modal({ product, categories, onSave, onClose, toast }) {
       if (!data.category) delete data.category
       if (product) await updateProduct(product.id, data)
       else await createProduct(data)
-      toast(product ? 'Маҳсулот навсозӣ шуд' : 'Маҳсулоти нав сохта шуд')
+      toast(product ? t(lang, 'products_updated') : t(lang, 'products_created'))
       onSave()
-    } catch (e) { toast(JSON.stringify(e.response?.data || 'Хатогӣ'), 'error') }
+    } catch (e) { toast(JSON.stringify(e.response?.data || t(lang, 'error')), 'error') }
     finally { setSaving(false) }
   }
 
@@ -40,39 +42,39 @@ function Modal({ product, categories, onSave, onClose, toast }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-bold text-gray-800">{product ? 'Маҳсулот таҳрир' : 'Маҳсулоти нав'}</h2>
+          <h2 className="font-bold text-gray-800">{product ? t(lang, 'products_edit_title') : t(lang, 'products_new_title')}</h2>
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 transition-colors">
             <X size={18} className="text-gray-400" />
           </button>
         </div>
         <form onSubmit={submit} className="p-6 space-y-4">
-          <div><label className="label">Ном *</label><input className="input" required {...f('name')} /></div>
+          <div><label className="label">{t(lang, 'products_name')}</label><input className="input" required {...f('name')} /></div>
           <div className="grid grid-cols-2 gap-3">
-            <div><label className="label">Нарх фурӯш *</label><input className="input" type="number" step="0.01" required {...f('price')} /></div>
-            <div><label className="label">Нарх харид (Опт)</label><input className="input" type="number" step="0.01" {...f('cost_price')} /></div>
+            <div><label className="label">{t(lang, 'products_sell_price')}</label><input className="input" type="number" step="0.01" required {...f('price')} /></div>
+            <div><label className="label">{t(lang, 'products_cost_price')}</label><input className="input" type="number" step="0.01" {...f('cost_price')} /></div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div><label className="label">Нарх тахфиф</label><input className="input" type="number" step="0.01" {...f('discount_price')} /></div>
-            <div><label className="label">Захира</label><input className="input" type="number" {...f('stock_quantity')} /></div>
+            <div><label className="label">{t(lang, 'products_discount')}</label><input className="input" type="number" step="0.01" {...f('discount_price')} /></div>
+            <div><label className="label">{t(lang, 'products_stock')}</label><input className="input" type="number" {...f('stock_quantity')} /></div>
           </div>
           <div>
-            <label className="label">Категория</label>
+            <label className="label">{t(lang, 'products_category')}</label>
             <select className="input" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-              <option value="">— интихоб —</option>
+              <option value="">{t(lang, 'products_select_cat')}</option>
               {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
-          <div><label className="label">SKU / Код</label><input className="input" {...f('sku')} /></div>
-          <div><label className="label">Тавсиф</label><textarea className="input" rows={2} {...f('description')} /></div>
+          <div><label className="label">{t(lang, 'products_sku')}</label><input className="input" {...f('sku')} /></div>
+          <div><label className="label">{t(lang, 'products_description')}</label><textarea className="input" rows={2} {...f('description')} /></div>
           <div className="flex gap-4 text-sm">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} />
-              <span className="text-gray-700">Фаъол</span>
+              <span className="text-gray-700">{t(lang, 'products_active')}</span>
             </label>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" className="btn-secondary flex-1" onClick={onClose}>Бекор</button>
-            <button type="submit" disabled={saving} className="btn-primary flex-1">{saving ? 'Сабт...' : 'Сабт кунед'}</button>
+            <button type="button" className="btn-secondary flex-1" onClick={onClose}>{t(lang, 'products_cancel')}</button>
+            <button type="submit" disabled={saving} className="btn-primary flex-1">{saving ? t(lang, 'products_saving') : t(lang, 'products_save')}</button>
           </div>
         </form>
       </div>
@@ -82,6 +84,7 @@ function Modal({ product, categories, onSave, onClose, toast }) {
 
 export default function Products() {
   const toast = useToast()
+  const { language: lang = 'tg' } = useSettingsStore()
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
@@ -105,32 +108,32 @@ export default function Products() {
   useEffect(() => { load() }, [search, catFilter])
 
   const handleDelete = async (id) => {
-    if (!confirm('Маҳсулот нест шавад?')) return
-    try { await deleteProduct(id); toast('Маҳсулот нест шуд', 'warning'); load() }
-    catch (e) { toast(e.response?.data?.detail || 'Хатогӣ', 'error') }
+    if (!confirm(t(lang, 'products_del_confirm'))) return
+    try { await deleteProduct(id); toast(t(lang, 'products_deleted'), 'warning'); load() }
+    catch (e) { toast(e.response?.data?.detail || t(lang, 'error'), 'error') }
   }
 
   const filtered = catFilter === null ? products : products.filter((p) => p.category === catFilter)
 
   return (
     <div className="space-y-4">
-      {modal?.type === 'create' && <Modal categories={categories} toast={toast} onSave={() => { setModal(null); load() }} onClose={() => setModal(null)} />}
-      {modal?.type === 'edit' && <Modal product={modal.product} categories={categories} toast={toast} onSave={() => { setModal(null); load() }} onClose={() => setModal(null)} />}
+      {modal?.type === 'create' && <Modal categories={categories} toast={toast} lang={lang} onSave={() => { setModal(null); load() }} onClose={() => setModal(null)} />}
+      {modal?.type === 'edit' && <Modal product={modal.product} categories={categories} toast={toast} lang={lang} onSave={() => { setModal(null); load() }} onClose={() => setModal(null)} />}
 
       <div className="flex items-center justify-between animate-fade-up">
         <div>
-          <h1 className="text-xl font-bold text-gray-800">Маҳсулот</h1>
-          <p className="text-sm text-gray-400">{products.length} маҳсулот</p>
+          <h1 className="text-xl font-bold text-gray-800">{t(lang, 'products_title')}</h1>
+          <p className="text-sm text-gray-400">{products.length} {t(lang, 'products_title').toLowerCase()}</p>
         </div>
         <button className="btn-primary flex items-center gap-2" onClick={() => setModal({ type: 'create' })}>
-          <Plus size={16} /> Илова
+          <Plus size={16} /> {t(lang, 'products_add')}
         </button>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap animate-fade-up" style={{ animationDelay: '60ms' }}>
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input className="input pl-9 text-sm w-52" placeholder="Ҷустуҷӯ..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input className="input pl-9 text-sm w-52" placeholder={t(lang, 'search')} value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
         <button onClick={() => setCatFilter(null)}
           className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${catFilter === null ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
@@ -162,7 +165,7 @@ export default function Products() {
                   <p className="text-base font-bold text-indigo-600">{fmt(p.price)} сомони</p>
                   {p.cost_price && (
                     <p className="text-xs text-gray-400 mt-0.5">
-                      Опт: {fmt(p.cost_price)}
+                      {t(lang, 'products_opt')}: {fmt(p.cost_price)}
                       {profit && <span className="text-emerald-600 font-semibold ml-1">+{fmt(profit)}</span>}
                     </p>
                   )}
@@ -170,7 +173,7 @@ export default function Products() {
                   <div className="flex gap-2 mt-3">
                     <button onClick={() => setModal({ type: 'edit', product: p })}
                       className="flex-1 flex items-center justify-center gap-1 text-xs border border-gray-200 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 py-1.5 rounded-xl transition-all">
-                      <Edit size={12} /> Таҳрир
+                      <Edit size={12} /> {t(lang, 'edit')}
                     </button>
                     <button onClick={() => handleDelete(p.id)}
                       className="flex items-center justify-center gap-1 text-xs bg-red-50 hover:bg-red-500 text-red-500 hover:text-white px-3 py-1.5 rounded-xl transition-all border border-red-100 hover:border-red-500">
@@ -184,7 +187,7 @@ export default function Products() {
           {!filtered.length && (
             <div className="col-span-full text-center py-16 text-gray-400">
               <Package size={36} className="mx-auto mb-3 opacity-20" />
-              <p>Маҳсулот топилмад</p>
+              <p>{t(lang, 'products_not_found')}</p>
             </div>
           )}
         </div>

@@ -5,7 +5,7 @@ import useAuthStore from '../store/useAuthStore'
 import useSettingsStore, { BUSINESS_TYPES } from '../store/useSettingsStore'
 import { t } from '../lib/i18n'
 import {
-  User, Store, Save, Loader, Building2, CheckCircle2,
+  User, Store, Save, Loader,
   AlertTriangle, Settings2, ShieldCheck, Pencil, Phone,
   Mail, Hash, Table2, Bell, ImagePlus, Trash2, Globe, Check,
   Send, Plus, X, DollarSign, BotMessageSquare, QrCode, Upload,
@@ -13,7 +13,6 @@ import {
 import { useToast } from '../components/Toast'
 
 const TABS = [
-  { key: 'business', icon: Building2,      label_tg: 'Навъи бизнес', label_ru: 'Тип бизнеса' },
   { key: 'store',    icon: Store,           label_tg: 'Мағоза',       label_ru: 'Магазин' },
   { key: 'profile',  icon: User,            label_tg: 'Профил',       label_ru: 'Профиль' },
   { key: 'salary',   icon: DollarSign,      label_tg: 'Харҷот',       label_ru: 'Расходы' },
@@ -44,7 +43,7 @@ export default function Settings() {
   const lang = settings.language || 'tg'
   const T = (key) => t(lang, key)
 
-  const [tab, setTab] = useState('business')
+  const [tab, setTab] = useState('store')
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -182,7 +181,7 @@ export default function Settings() {
 
   const roleColor  = ROLE_COLORS[profile?.role] || 'from-gray-400 to-gray-500'
   const roleLabel  = lang === 'ru' ? ROLE_LABELS_RU[profile?.role] : ROLE_LABELS_TG[profile?.role]
-  const activeBiz  = BUSINESS_TYPES[settings.businessType]
+  const activeBiz  = BUSINESS_TYPES['bubbletea']
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -220,74 +219,6 @@ export default function Settings() {
         ))}
       </div>
 
-      {/* ── TAB: Навъи бизнес ──────────────────────────────────── */}
-      {tab === 'business' && (
-        <div className="space-y-4 animate-fade-up">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-50">
-              <p className="font-bold text-gray-800">{T('set_business_title')}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{T('set_business_sub')}</p>
-            </div>
-            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {Object.entries(BUSINESS_TYPES).map(([key, biz]) => {
-                const isActive = settings.businessType === key
-                const label = lang === 'ru' ? biz.label_ru : biz.label
-                const desc  = lang === 'ru' ? biz.desc_ru  : biz.desc
-                return (
-                  <button
-                    key={key}
-                    onClick={() => settings.update({ businessType: key })}
-                    className={`relative text-left p-5 rounded-2xl border-2 transition-all duration-200 group ${
-                      isActive
-                        ? 'border-indigo-400 bg-gradient-to-br from-indigo-50 to-blue-50 shadow-lg shadow-indigo-100'
-                        : 'border-gray-100 bg-gray-50/50 hover:border-gray-200 hover:bg-white hover:shadow-sm'
-                    }`}
-                  >
-                    {isActive && (
-                      <div className="absolute top-4 right-4">
-                        <CheckCircle2 size={18} className="text-indigo-500" />
-                      </div>
-                    )}
-                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${biz.color} flex items-center justify-center text-2xl mb-4 shadow-md transition-transform group-hover:scale-105`}>
-                      {biz.icon}
-                    </div>
-                    <p className={`font-bold text-sm leading-tight mb-1 ${isActive ? 'text-indigo-800' : 'text-gray-800'}`}>
-                      {label}
-                    </p>
-                    <p className="text-xs text-gray-400 leading-relaxed">{desc}</p>
-                    {biz.tableMode && (
-                      <div className="mt-3 inline-flex items-center gap-1 text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-semibold">
-                        <Table2 size={9} /> {T('biz_table_mode')}
-                      </div>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          <div className={`rounded-2xl p-4 bg-gradient-to-r ${activeBiz.color} text-white shadow-lg`}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xl">
-                {activeBiz.icon}
-              </div>
-              <div>
-                <p className="font-bold text-sm">
-                  {T('biz_active')}: {lang === 'ru' ? activeBiz.label_ru : activeBiz.label}
-                </p>
-                <p className="text-white/70 text-xs mt-0.5">
-                  {lang === 'ru' ? activeBiz.desc_ru : activeBiz.desc}
-                </p>
-              </div>
-              <div className="ml-auto flex items-center gap-1 bg-white/20 rounded-xl px-3 py-1.5 text-xs font-bold">
-                <ShieldCheck size={13} />
-                {lang === 'ru' ? 'Активно' : 'Фаъол'}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* ── TAB: Мағоза ──────────────────────────────────────── */}
       {tab === 'store' && (
         <div className="space-y-4 animate-fade-up">
@@ -316,18 +247,12 @@ export default function Settings() {
                     <Table2 size={13} className="text-gray-400" /> {T('set_tables')}
                   </label>
                   <input
-                    className={`input ${!activeBiz.tableMode ? 'opacity-50 cursor-not-allowed bg-gray-50' : ''}`}
+                    className="input"
                     type="number" min="1" max="99"
                     value={tableCount}
                     onChange={(e) => setTableCount(e.target.value)}
-                    disabled={!activeBiz.tableMode}
                   />
-                  <p className="text-xs text-gray-400 mt-1.5">
-                    {activeBiz.tableMode
-                      ? <span className="text-emerald-600">✓ {T('biz_table_mode')}</span>
-                      : T('biz_tables_only')
-                    }
-                  </p>
+                  <p className="text-xs text-emerald-600 mt-1.5">✓ {T('biz_table_mode')}</p>
                 </div>
                 <div>
                   <label className="label flex items-center gap-1.5 mb-1.5">

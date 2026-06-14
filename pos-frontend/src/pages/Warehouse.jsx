@@ -4,17 +4,18 @@ import { createWriteOff } from '../api/modifiers'
 import { Warehouse as WHIcon, Search, ChevronDown, ChevronUp, Package, Plus, Loader, TrendingUp, AlertTriangle, CheckCircle, Trash2, X } from 'lucide-react'
 import { useToast } from '../components/Toast'
 import { TableSkeleton } from '../components/Skeleton'
+import useSettingsStore from '../store/useSettingsStore'
+import { t } from '../lib/i18n'
 
-const REASONS = [
-  { value: 'spoiled', label: 'Вайрон шуд' },
-  { value: 'broken', label: 'Шикаст' },
-  { value: 'expired', label: 'Мӯҳлат гузашт' },
-  { value: 'training', label: 'Омӯзиш / санҷиш' },
-  { value: 'other', label: 'Дигар' },
-]
-
-function WriteOffModal({ product, onClose, onDone }) {
+function WriteOffModal({ product, onClose, onDone, lang }) {
   const toast = useToast()
+  const REASONS = [
+    { value: 'spoiled', label: t(lang, 'wo_reason_spoiled') },
+    { value: 'broken',  label: t(lang, 'wo_reason_broken') },
+    { value: 'expired', label: t(lang, 'wo_reason_expired') },
+    { value: 'training',label: t(lang, 'wo_reason_training') },
+    { value: 'other',   label: t(lang, 'wo_reason_other') },
+  ]
   const [qty, setQty] = useState(1)
   const [reason, setReason] = useState('spoiled')
   const [note, setNote] = useState('')
@@ -25,9 +26,9 @@ function WriteOffModal({ product, onClose, onDone }) {
     setSaving(true)
     try {
       await createWriteOff({ product: product.id, quantity: Number(qty), reason, note })
-      toast(`${product.name} — ${qty} дона аз анбор хориҷ шуд`, 'success')
+      toast(`${product.name} — ${qty} ${t(lang, 'wo_done_toast')}`, 'success')
       onDone()
-    } catch (e) { toast(e.response?.data?.detail || 'Хатогӣ', 'error') }
+    } catch (e) { toast(e.response?.data?.detail || t(lang, 'error'), 'error') }
     finally { setSaving(false) }
   }
 
@@ -36,35 +37,35 @@ function WriteOffModal({ product, onClose, onDone }) {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm animate-scale-in">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <p className="font-bold text-gray-800 flex items-center gap-2">
-            <Trash2 size={16} className="text-red-500" /> Хориҷ аз анбор
+            <Trash2 size={16} className="text-red-500" /> {t(lang, 'wo_title')}
           </p>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
         </div>
         <div className="p-5 space-y-4">
           <div className="bg-red-50 rounded-xl px-4 py-3">
             <p className="font-bold text-gray-800">{product.name}</p>
-            <p className="text-sm text-gray-500">Дар анбор: <strong>{product.stock_quantity}</strong> дона</p>
+            <p className="text-sm text-gray-500">{t(lang, 'wo_in_stock')}: <strong>{product.stock_quantity}</strong> {t(lang, 'warehouse_pieces')}</p>
           </div>
           <div>
-            <label className="label">Миқдор *</label>
+            <label className="label">{t(lang, 'wo_qty')}</label>
             <input className="input" type="number" min="1" max={product.stock_quantity}
               value={qty} onChange={(e) => setQty(e.target.value)} />
           </div>
           <div>
-            <label className="label">Сабаб *</label>
+            <label className="label">{t(lang, 'wo_reason')}</label>
             <select className="input" value={reason} onChange={(e) => setReason(e.target.value)}>
               {REASONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
             </select>
           </div>
           <div>
-            <label className="label">Тавзеҳ (ихтиёрӣ)</label>
-            <input className="input" placeholder="Тавзеҳи иловагӣ..."
+            <label className="label">{t(lang, 'wo_note')}</label>
+            <input className="input" placeholder={t(lang, 'wo_note_ph')}
               value={note} onChange={(e) => setNote(e.target.value)} />
           </div>
           <button onClick={submit} disabled={saving}
             className="w-full py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold flex items-center justify-center gap-2 transition-all">
             {saving ? <Loader size={16} className="animate-spin" /> : <Trash2 size={16} />}
-            {saving ? 'Нигоҳ мешавад...' : 'Аз анбор хориҷ кунед'}
+            {saving ? t(lang, 'wo_saving') : t(lang, 'wo_btn')}
           </button>
         </div>
       </div>
@@ -74,6 +75,7 @@ function WriteOffModal({ product, onClose, onDone }) {
 
 export default function Warehouse() {
   const toast = useToast()
+  const { language: lang = 'tg' } = useSettingsStore()
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [writeOffTarget, setWriteOffTarget] = useState(null)
@@ -132,11 +134,11 @@ export default function Warehouse() {
     try {
       if (form.color) await addColorStock(form.productId, { color: form.color, quantity: Number(form.qty) })
       else await addStock(form.productId, { quantity: Number(form.qty) })
-      toast(`${form.productName} — ${form.qty} дона ба анбор илова шуд`)
+      toast(`${form.productName} — ${form.qty} ${t(lang, 'warehouse_added_toast')}`)
       setForm({ productId: null, productName: '', color: '', qty: 1 })
       setProductSearch('')
       load()
-    } catch (e) { toast(e.response?.data?.detail || 'Хатогӣ', 'error') }
+    } catch (e) { toast(e.response?.data?.detail || t(lang, 'error'), 'error') }
     finally { setSaving(false) }
   }
 
@@ -166,6 +168,7 @@ export default function Warehouse() {
     {writeOffTarget && (
       <WriteOffModal
         product={writeOffTarget}
+        lang={lang}
         onClose={() => setWriteOffTarget(null)}
         onDone={() => { setWriteOffTarget(null); load() }}
       />
@@ -173,18 +176,18 @@ export default function Warehouse() {
     <div className="space-y-5">
       <div className="flex items-center justify-between animate-fade-up">
         <div>
-          <h1 className="text-xl font-bold text-gray-800">Анбор</h1>
-          <p className="text-sm text-gray-400">Маҳсулотро ба анбор қабул кунед</p>
+          <h1 className="text-xl font-bold text-gray-800">{t(lang, 'warehouse_title')}</h1>
+          <p className="text-sm text-gray-400">{t(lang, 'warehouse_sub')}</p>
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 animate-fade-up stagger" style={{ animationDelay: '60ms' }}>
         {[
-          { label: 'Ҳама маҳсулот', value: total,   icon: Package,       gradient: 'from-slate-500 to-gray-600',    active: stockFilter === 'all',     key: 'all' },
-          { label: 'Мавҷуд',        value: inStock,  icon: CheckCircle,   gradient: 'from-emerald-500 to-green-600', active: stockFilter === 'instock',  key: 'instock' },
-          { label: 'Кам мондааст',  value: low,      icon: AlertTriangle, gradient: 'from-amber-500 to-orange-500',  active: stockFilter === 'low',      key: 'low' },
-          { label: 'Тамом',         value: empty,    icon: TrendingUp,    gradient: 'from-red-500 to-rose-500',      active: stockFilter === 'empty',    key: 'empty' },
+          { label: t(lang, 'warehouse_all'),     value: total,   icon: Package,       gradient: 'from-slate-500 to-gray-600',    active: stockFilter === 'all',     key: 'all' },
+          { label: t(lang, 'warehouse_instock'),value: inStock,  icon: CheckCircle,   gradient: 'from-emerald-500 to-green-600', active: stockFilter === 'instock',  key: 'instock' },
+          { label: t(lang, 'warehouse_low'),    value: low,      icon: AlertTriangle, gradient: 'from-amber-500 to-orange-500',  active: stockFilter === 'low',      key: 'low' },
+          { label: t(lang, 'warehouse_empty'),  value: empty,    icon: TrendingUp,    gradient: 'from-red-500 to-rose-500',      active: stockFilter === 'empty',    key: 'empty' },
         ].map(({ label, value, icon: Icon, gradient, active, key }) => (
           <button key={key} onClick={() => setStockFilter(key)}
             className={`animate-fade-up text-left p-4 rounded-2xl border-2 transition-all duration-200 ${active ? 'border-indigo-400 bg-indigo-50 shadow-md' : 'bg-white border-gray-100 hover:border-gray-200 shadow-sm'}`}>
@@ -203,17 +206,17 @@ export default function Warehouse() {
           <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
             <Plus size={14} className="text-indigo-600" />
           </div>
-          Қабул ба анбор
+          {t(lang, 'warehouse_add_title')}
         </h2>
         <form onSubmit={handleAdd}>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             <div className="relative">
-              <label className="label">Маҳсулот *</label>
+              <label className="label">{t(lang, 'warehouse_product_lbl')}</label>
               <div className="relative">
                 <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   className="input pl-10"
-                  placeholder="Ҷустуҷӯ..."
+                  placeholder={t(lang, 'search')}
                   value={productSearch}
                   onChange={(e) => { setProductSearch(e.target.value); setForm({ ...form, productId: null, productName: '' }) }}
                   onBlur={() => setTimeout(() => setShowResults(false), 150)}
@@ -235,21 +238,21 @@ export default function Warehouse() {
               </div>
               {form.productId && (
                 <p className="text-xs text-emerald-600 mt-1 font-medium flex items-center gap-1">
-                  <CheckCircle size={11} /> Интихоб шуд
+                  <CheckCircle size={11} /> {t(lang, 'warehouse_selected')}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="label">Ранг</label>
+              <label className="label">{t(lang, 'warehouse_color_lbl')}</label>
               <select className="input" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })}>
-                <option value="">— Рангро интихоб кунед —</option>
+                <option value="">{t(lang, 'warehouse_select_color')}</option>
                 {colors.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
               </select>
             </div>
 
             <div>
-              <label className="label">Миқдор (дона)</label>
+              <label className="label">{t(lang, 'warehouse_qty_lbl')}</label>
               <input className="input" type="number" min="1" value={form.qty}
                 onChange={(e) => setForm({ ...form, qty: e.target.value })} />
             </div>
@@ -257,7 +260,7 @@ export default function Warehouse() {
           <button type="submit" disabled={saving || !form.productId}
             className="btn-primary w-full py-3 flex items-center justify-center gap-2">
             {saving ? <Loader size={16} className="animate-spin" /> : <Plus size={16} />}
-            {saving ? 'Нигоҳ мешавад...' : 'Ба анбор илова кунед'}
+            {saving ? t(lang, 'warehouse_saving') : t(lang, 'warehouse_save_btn')}
           </button>
         </form>
       </div>
@@ -266,7 +269,7 @@ export default function Warehouse() {
       <div className="flex flex-wrap gap-2 animate-fade-up" style={{ animationDelay: '180ms' }}>
         <div className="relative">
           <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input className="input pl-10 w-52" placeholder="Ҷустуҷӯ..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input className="input pl-10 w-52" placeholder={t(lang, 'search')} value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
         {categories.map((c) => (
           <button key={c.id} onClick={() => setCatFilter(catFilter === c.id ? null : c.id)}
@@ -300,11 +303,11 @@ export default function Warehouse() {
                       <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden max-w-24">
                         <div className={`h-full ${sc.bar} rounded-full transition-all`} style={{ width: `${pct}%` }} />
                       </div>
-                      <span className={`text-xs font-bold ${sc.text}`}>{p.stock_quantity} дона</span>
+                      <span className={`text-xs font-bold ${sc.text}`}>{p.stock_quantity} {t(lang, 'warehouse_pieces')}</span>
                     </div>
                   </div>
                   <div className={`badge ${sc.badge} text-xs font-semibold shrink-0 mr-1`}>
-                    {p.stock_quantity > 3 ? 'Мавҷуд' : p.stock_quantity > 0 ? 'Кам' : 'Тамом'}
+                    {p.stock_quantity > 3 ? t(lang, 'warehouse_stock_badge_ok') : p.stock_quantity > 0 ? t(lang, 'warehouse_stock_badge_low') : t(lang, 'warehouse_stock_badge_out')}
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); setWriteOffTarget(p) }}
@@ -333,7 +336,7 @@ export default function Warehouse() {
                         })}
                       </div>
                     ) : (
-                      <p className="text-xs text-gray-400 mt-3 text-center">Ранги махсус нест — умумии захира: {p.stock_quantity} дона</p>
+                      <p className="text-xs text-gray-400 mt-3 text-center">{t(lang, 'warehouse_no_colors')}: {p.stock_quantity} {t(lang, 'warehouse_pieces')}</p>
                     )}
                   </div>
                 )}
@@ -343,7 +346,7 @@ export default function Warehouse() {
           {!filtered.length && (
             <div className="text-center py-16 text-gray-400">
               <WHIcon size={36} className="mx-auto mb-3 opacity-20" />
-              <p>Маҳсулот топилмад</p>
+              <p>{t(lang, 'warehouse_not_found')}</p>
             </div>
           )}
         </div>

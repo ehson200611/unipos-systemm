@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ClipboardCheck, Plus, CheckCircle2, AlertTriangle, RotateCcw, Lock } from 'lucide-react'
 import { getSessions, getSession, createSession, updateLine, closeSession } from '../api/stocktake'
+import useSettingsStore from '../store/useSettingsStore'
+import { t } from '../lib/i18n'
 
 function FarqBadge({ diff }) {
   if (diff === null || diff === undefined) return <span className="text-gray-300 text-xs">—</span>
@@ -10,6 +12,7 @@ function FarqBadge({ diff }) {
 }
 
 export default function Stocktake() {
+  const { language: lang = 'tg' } = useSettingsStore()
   const [nishastho, setNishastho] = useState([])
   const [faol, setFaol] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -61,7 +64,7 @@ export default function Stocktake() {
       setNavNishast(false)
       setIzoh('')
     } catch (e) {
-      alert(e.response?.data?.detail || 'Хатогӣ рӯй дод')
+      alert(e.response?.data?.detail || t(lang, 'error'))
     } finally {
       setMeofarad(false)
     }
@@ -86,58 +89,58 @@ export default function Stocktake() {
   const nishastBand = async (tatbiq) => {
     if (!faol) return
     if (!confirm(tatbiq
-      ? 'Нишастро мебандем ва тафовутҳоро ба анбор татбиқ мекунем?'
-      : 'Нишастро бе тағйир мебандем?')) return
+      ? t(lang, 'stocktake_confirm_apply')
+      : t(lang, 'stocktake_confirm_close'))) return
     setMebandad(true)
     try {
       const r = await closeSession(faol.id, tatbiq)
       setFaol(r.data)
       setNishastho(prev => prev.map(s => s.id === r.data.id ? r.data : s))
     } catch (e) {
-      alert(e.response?.data?.detail || 'Хатогӣ рӯй дод')
+      alert(e.response?.data?.detail || t(lang, 'error'))
     } finally {
       setMebandad(false)
     }
   }
 
-  const филтр = faol
+  const filteredLines = faol
     ? faol.lines.filter(l => l.product_name.toLowerCase().includes(justujo.toLowerCase()))
     : []
 
-  const ҳисобшуда = faol ? faol.lines.filter(l => l.actual_qty !== null).length : 0
-  const ҳамагӣ = faol ? faol.lines.length : 0
-  const зиёдӣ = faol ? faol.lines.filter(l => l.diff > 0) : []
-  const норасоӣ = faol ? faol.lines.filter(l => l.diff < 0) : []
+  const counted = faol ? faol.lines.filter(l => l.actual_qty !== null).length : 0
+  const total = faol ? faol.lines.length : 0
+  const surplus = faol ? faol.lines.filter(l => l.diff > 0) : []
+  const shortage = faol ? faol.lines.filter(l => l.diff < 0) : []
 
   return (
     <div className="max-w-5xl mx-auto space-y-5">
-      {/* Сарлавҳа */}
+      {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-200">
             <ClipboardCheck size={20} className="text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Баршумории анбор</h1>
-            <p className="text-xs text-gray-400">Санҷиши воқеии захираи анбор</p>
+            <h1 className="text-xl font-bold text-gray-900">{t(lang, 'stocktake_title')}</h1>
+            <p className="text-xs text-gray-400">{t(lang, 'stocktake_sub')}</p>
           </div>
         </div>
         <button
           onClick={() => setNavNishast(true)}
           className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-sm font-semibold transition-colors shadow"
         >
-          <Plus size={16} /> Нишасти нав
+          <Plus size={16} /> {t(lang, 'stocktake_new_btn')}
         </button>
       </div>
 
-      {/* Шакли нишасти нав */}
+      {/* New session form */}
       {navNishast && (
         <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm space-y-3">
-          <p className="font-semibold text-gray-700">Нишасти нав</p>
+          <p className="font-semibold text-gray-700">{t(lang, 'stocktake_new_form')}</p>
           <input
             value={izoh}
             onChange={e => setIzoh(e.target.value)}
-            placeholder="Тавзеҳ (ихтиёрӣ)"
+            placeholder={t(lang, 'stocktake_note_ph')}
             className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300"
           />
           <div className="flex gap-2">
@@ -146,21 +149,21 @@ export default function Stocktake() {
               disabled={meofarad}
               className="px-5 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-sm font-semibold transition-colors"
             >
-              {meofarad ? 'Лутфан интизор шавед...' : 'Сохтан'}
+              {meofarad ? t(lang, 'stocktake_creating') : t(lang, 'stocktake_create')}
             </button>
             <button onClick={() => setNavNishast(false)} className="px-4 py-2 border border-gray-200 rounded-xl text-sm text-gray-500 hover:bg-gray-50">
-              Бекор кардан
+              {t(lang, 'stocktake_cancel')}
             </button>
           </div>
         </div>
       )}
 
-      {/* Рӯйхати нишастҳо + нишасти фаъол */}
+      {/* Sessions list + active session */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
-        {/* Рӯйхат */}
+        {/* List */}
         <div className="space-y-2">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wide px-1">Нишастҳо</p>
-          {loading && <p className="text-sm text-gray-400 px-1">Лутфан интизор шавед...</p>}
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wide px-1">{t(lang, 'stocktake_sessions')}</p>
+          {loading && <p className="text-sm text-gray-400 px-1">{t(lang, 'stocktake_loading')}</p>}
           {nishastho.map(s => (
             <button
               key={s.id}
@@ -171,42 +174,42 @@ export default function Stocktake() {
                   : 'bg-white border-gray-100 text-gray-600 hover:border-gray-200 hover:bg-gray-50'
               }`}
             >
-              <div className="font-medium">Нишаст #{s.id}</div>
+              <div className="font-medium">{t(lang, 'stocktake_session_lbl')}{s.id}</div>
               <div className="text-xs text-gray-400 mt-0.5">
                 {new Date(s.created_at).toLocaleDateString('ru-RU')}
                 {' · '}
                 <span className={s.status === 'open' ? 'text-emerald-600' : 'text-gray-400'}>
-                  {s.status === 'open' ? 'Кушода' : 'Баста'}
+                  {s.status === 'open' ? t(lang, 'stocktake_open') : t(lang, 'stocktake_closed')}
                 </span>
               </div>
             </button>
           ))}
           {!loading && nishastho.length === 0 && (
-            <p className="text-xs text-gray-400 px-1">Нишаст нест. Нав эҷод кунед.</p>
+            <p className="text-xs text-gray-400 px-1">{t(lang, 'stocktake_empty')}</p>
           )}
         </div>
 
-        {/* Нишасти фаъол */}
+        {/* Active session */}
         {faol ? (
           <div className="lg:col-span-3 space-y-4">
-            {/* Нишондиҳандаҳо */}
+            {/* Indicators */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex flex-wrap gap-4 items-center">
               <div className="text-sm">
-                <span className="text-gray-400">Нишаст</span>{' '}
+                <span className="text-gray-400">{t(lang, 'stocktake_session')}</span>{' '}
                 <span className="font-bold text-gray-900">#{faol.id}</span>
               </div>
               <div className="text-sm">
-                <span className="text-gray-400">Ҳисобшуда:</span>{' '}
-                <span className="font-bold text-gray-900">{ҳисобшуда}/{ҳамагӣ}</span>
+                <span className="text-gray-400">{t(lang, 'stocktake_counted')}:</span>{' '}
+                <span className="font-bold text-gray-900">{counted}/{total}</span>
               </div>
-              {норасоӣ.length > 0 && (
+              {shortage.length > 0 && (
                 <div className="flex items-center gap-1 text-sm text-red-600 font-semibold">
-                  <AlertTriangle size={14} /> {норасоӣ.length} норасоӣ
+                  <AlertTriangle size={14} /> {shortage.length} {t(lang, 'stocktake_shortage')}
                 </div>
               )}
-              {зиёдӣ.length > 0 && (
+              {surplus.length > 0 && (
                 <div className="text-sm text-blue-600 font-semibold">
-                  +{зиёдӣ.length} зиёдӣ
+                  +{surplus.length} {t(lang, 'stocktake_surplus')}
                 </div>
               )}
               {faol.status === 'open' && (
@@ -216,45 +219,45 @@ export default function Stocktake() {
                     disabled={mebandad}
                     className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 text-gray-600 rounded-xl text-xs font-semibold hover:bg-gray-50 transition-colors"
                   >
-                    <Lock size={13} /> Банд кун (бе тағйир)
+                    <Lock size={13} /> {t(lang, 'stocktake_close_no_adj')}
                   </button>
                   <button
                     onClick={() => nishastBand(true)}
                     disabled={mebandad}
                     className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-semibold transition-colors"
                   >
-                    <RotateCcw size={13} /> Тасдиқ ва банд кун
+                    <RotateCcw size={13} /> {t(lang, 'stocktake_close_apply')}
                   </button>
                 </div>
               )}
               {faol.status === 'closed' && (
                 <span className="ml-auto inline-flex items-center gap-1 text-xs text-gray-400">
-                  <Lock size={12} /> Баста {faol.closed_at ? new Date(faol.closed_at).toLocaleString('ru-RU') : ''}
+                  <Lock size={12} /> {t(lang, 'stocktake_closed_lbl')} {faol.closed_at ? new Date(faol.closed_at).toLocaleString('ru-RU') : ''}
                 </span>
               )}
             </div>
 
-            {/* Ҷустуҷӯ */}
+            {/* Search */}
             <input
               value={justujo}
               onChange={e => setJustujo(e.target.value)}
-              placeholder="Ҷустуҷӯи маҳсулот..."
+              placeholder={t(lang, 'stocktake_search_ph')}
               className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300"
             />
 
-            {/* Ҷадвали сатрҳо */}
+            {/* Lines table */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wide">
-                    <th className="text-left px-4 py-3">Маҳсулот</th>
-                    <th className="text-center px-4 py-3 w-28">Дар система</th>
-                    <th className="text-center px-4 py-3 w-32">Воқеан</th>
-                    <th className="text-center px-4 py-3 w-24">Фарқ</th>
+                    <th className="text-left px-4 py-3">{t(lang, 'stocktake_col_product')}</th>
+                    <th className="text-center px-4 py-3 w-28">{t(lang, 'stocktake_col_system')}</th>
+                    <th className="text-center px-4 py-3 w-32">{t(lang, 'stocktake_col_actual')}</th>
+                    <th className="text-center px-4 py-3 w-24">{t(lang, 'stocktake_col_diff')}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {филтр.map(line => {
+                  {filteredLines.map(line => {
                     const farq = line.actual_qty !== null
                       ? line.actual_qty - line.system_qty
                       : null
@@ -286,10 +289,10 @@ export default function Stocktake() {
                       </tr>
                     )
                   })}
-                  {филтр.length === 0 && (
+                  {filteredLines.length === 0 && (
                     <tr>
                       <td colSpan={4} className="text-center py-8 text-gray-400 text-sm">
-                        Маҳсулот ёфт нашуд
+                        {t(lang, 'stocktake_not_found')}
                       </td>
                     </tr>
                   )}
@@ -299,7 +302,7 @@ export default function Stocktake() {
           </div>
         ) : (
           <div className="lg:col-span-3 flex items-center justify-center py-20 text-gray-400 text-sm">
-            Нишасти баршуморӣро интихоб кунед ё нав эҷод кунед
+            {t(lang, 'stocktake_select_or_new')}
           </div>
         )}
       </div>

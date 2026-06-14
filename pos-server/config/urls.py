@@ -12,6 +12,8 @@ urlpatterns = [
     path('api/', include('products.urls')),
     path('api/', include('sales.urls')),
     path('api/reports/', include('reports.urls')),
+    path('api/', include('customers.urls')),
+    path('api/', include('suppliers.urls')),
     path('api/shifts/', ShiftListView.as_view()),
     path('api/shifts/current/', CurrentShiftView.as_view()),
     path('api/shifts/open/', OpenShiftView.as_view()),

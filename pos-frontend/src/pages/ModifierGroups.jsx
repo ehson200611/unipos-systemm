@@ -3,11 +3,14 @@ import { getModifierGroups, createModifierGroup, updateModifierGroup, deleteModi
 import { getProducts } from '../api/products'
 import { Plus, Trash2, Edit, X, Save, Loader, Tag, ChevronDown, ChevronUp } from 'lucide-react'
 import { useToast } from '../components/Toast'
+import useSettingsStore from '../store/useSettingsStore'
+import { t } from '../lib/i18n'
 
 const fmt = (n) => Number(n || 0).toLocaleString('ru', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 export default function ModifierGroups() {
   const toast = useToast()
+  const { language: lang = 'tg' } = useSettingsStore()
   const [groups, setGroups] = useState([])
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -38,21 +41,21 @@ export default function ModifierGroups() {
     setSaving(true)
     try {
       await createModifierGroup(newGroup)
-      toast('Гурӯҳ сохта шуд', 'success')
+      toast(t(lang, 'mods_group_created'), 'success')
       setNewGroup({ name: '', required: false, max_select: 1, product_ids: [] })
       setShowNewGroup(false)
       load()
-    } catch { toast('Хатогӣ', 'error') }
+    } catch { toast(t(lang, 'error'), 'error') }
     finally { setSaving(false) }
   }
 
   const handleDeleteGroup = async (id) => {
-    if (!confirm('Гурӯҳро ҳазф кунем?')) return
+    if (!confirm(t(lang, 'mods_del_confirm'))) return
     try {
       await deleteModifierGroup(id)
-      toast('Гурӯҳ ҳазф шуд')
+      toast(t(lang, 'mods_group_deleted'))
       load()
-    } catch { toast('Хатогӣ', 'error') }
+    } catch { toast(t(lang, 'error'), 'error') }
   }
 
   const handleAddModifier = async (groupId) => {
@@ -61,47 +64,47 @@ export default function ModifierGroups() {
     setSaving(true)
     try {
       await addModifier(groupId, { name: m.name, price: parseFloat(m.price) || 0, sort_order: 0 })
-      toast('Модификатор илова шуд', 'success')
+      toast(t(lang, 'mods_mod_added'), 'success')
       setNewMod({ ...newMod, [groupId]: { name: '', price: '' } })
       load()
-    } catch { toast('Хатогӣ', 'error') }
+    } catch { toast(t(lang, 'error'), 'error') }
     finally { setSaving(false) }
   }
 
   const handleDeleteModifier = async (groupId, mid, name) => {
     try {
       await deleteModifier(groupId, mid)
-      toast(`«${name}» ҳазф шуд`)
+      toast(`«${name}» ${t(lang, 'mods_mod_deleted')}`)
       load()
-    } catch { toast('Хатогӣ', 'error') }
+    } catch { toast(t(lang, 'error'), 'error') }
   }
 
   return (
     <div className="space-y-5 max-w-3xl">
       <div className="flex items-center justify-between animate-fade-up">
         <div>
-          <h1 className="text-xl font-bold text-gray-800">Модификаторҳо</h1>
-          <p className="text-sm text-gray-400">«Бе пиёз», «Соуси иловагӣ», «Андоза S/M/L»</p>
+          <h1 className="text-xl font-bold text-gray-800">{t(lang, 'mods_title')}</h1>
+          <p className="text-sm text-gray-400">{t(lang, 'mods_sub')}</p>
         </div>
         <button onClick={() => setShowNewGroup(true)}
           className="btn-primary flex items-center gap-2">
-          <Plus size={16} /> Гурӯҳи нав
+          <Plus size={16} /> {t(lang, 'mods_new_group_btn')}
         </button>
       </div>
 
       {/* New group form */}
       {showNewGroup && (
         <div className="bg-white rounded-2xl border-2 border-indigo-200 p-5 animate-scale-in">
-          <h3 className="font-bold text-gray-700 mb-4">Гурӯҳи нав</h3>
+          <h3 className="font-bold text-gray-700 mb-4">{t(lang, 'mods_new_group_title')}</h3>
           <div className="space-y-3">
             <div>
-              <label className="label">Номи гурӯҳ *</label>
-              <input className="input" placeholder="масалан: Соусҳо" value={newGroup.name}
+              <label className="label">{t(lang, 'mods_group_name')}</label>
+              <input className="input" placeholder={t(lang, 'mods_group_name_ph')} value={newGroup.name}
                 onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="label">Ҳадди аксар интихоб</label>
+                <label className="label">{t(lang, 'mods_max_select')}</label>
                 <input className="input" type="number" min="1" max="10" value={newGroup.max_select}
                   onChange={(e) => setNewGroup({ ...newGroup, max_select: Number(e.target.value) })} />
               </div>
@@ -110,12 +113,12 @@ export default function ModifierGroups() {
                   <input type="checkbox" className="w-4 h-4 rounded text-indigo-600"
                     checked={newGroup.required}
                     onChange={(e) => setNewGroup({ ...newGroup, required: e.target.checked })} />
-                  <span className="text-sm text-gray-700">Интихоб ҳатмист</span>
+                  <span className="text-sm text-gray-700">{t(lang, 'mods_required_chk')}</span>
                 </label>
               </div>
             </div>
             <div>
-              <label className="label">Маҳсулотҳо (дар кадом POS нишон дода шавад)</label>
+              <label className="label">{t(lang, 'mods_products_lbl')}</label>
               <div className="flex flex-wrap gap-2 mt-1">
                 {products.map((p) => {
                   const checked = newGroup.product_ids.includes(p.id)
@@ -140,10 +143,10 @@ export default function ModifierGroups() {
             <div className="flex gap-3 pt-2">
               <button onClick={handleCreateGroup} disabled={saving} className="btn-primary flex items-center gap-2">
                 {saving ? <Loader size={14} className="animate-spin" /> : <Save size={14} />}
-                Сабт кунед
+                {t(lang, 'mods_save')}
               </button>
               <button onClick={() => setShowNewGroup(false)} className="px-4 py-2 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 text-sm font-medium">
-                Бекор
+                {t(lang, 'mods_cancel')}
               </button>
             </div>
           </div>
@@ -156,8 +159,8 @@ export default function ModifierGroups() {
       ) : groups.length === 0 ? (
         <div className="text-center py-16 text-gray-400">
           <Tag size={36} className="mx-auto mb-3 opacity-20" />
-          <p>Модификатор ҳанӯз нест</p>
-          <p className="text-xs mt-1">Тугмаи «Гурӯҳи нав» -ро пахш кунед</p>
+          <p>{t(lang, 'mods_no_groups')}</p>
+          <p className="text-xs mt-1">{t(lang, 'mods_hint')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -176,9 +179,9 @@ export default function ModifierGroups() {
                   <div className="text-left flex-1">
                     <p className="font-bold text-gray-800">{group.name}</p>
                     <p className="text-xs text-gray-400 mt-0.5">
-                      {group.modifiers.length} вариант ·
-                      {group.required ? ' Ҳатмист' : ' Ихтиёрӣ'} ·
-                      Ҳадди аксар: {group.max_select}
+                      {group.modifiers.length} {t(lang, 'mods_variants')} ·
+                      {group.required ? ` ${t(lang, 'mods_required_lbl')}` : ` ${t(lang, 'mods_optional_lbl')}`} ·
+                      {t(lang, 'mods_max_lbl')}: {group.max_select}
                     </p>
                   </div>
                   <button
@@ -195,14 +198,14 @@ export default function ModifierGroups() {
                     {/* Existing modifiers */}
                     <div className="space-y-2 mt-3 mb-4">
                       {group.modifiers.length === 0 ? (
-                        <p className="text-xs text-gray-400 text-center py-3">Вариант ҳанӯз нест</p>
+                        <p className="text-xs text-gray-400 text-center py-3">{t(lang, 'mods_no_variants')}</p>
                       ) : (
                         group.modifiers.map((m) => (
                           <div key={m.id} className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2.5">
                             <span className="text-sm font-semibold text-gray-700">{m.name}</span>
                             <div className="flex items-center gap-3">
                               <span className="text-sm font-bold text-indigo-600">
-                                {m.price > 0 ? `+${fmt(m.price)} сом` : 'Ройгон'}
+                                {m.price > 0 ? `+${fmt(m.price)} ${t(lang, 'currency')}` : t(lang, 'mods_free')}
                               </span>
                               <button
                                 onClick={() => handleDeleteModifier(group.id, m.id, m.name)}
@@ -220,7 +223,7 @@ export default function ModifierGroups() {
                     <div className="flex gap-2">
                       <input
                         className="input flex-1 py-2 text-sm"
-                        placeholder="Номи вариант (масалан: Кетчуп)"
+                        placeholder={t(lang, 'mods_variant_ph')}
                         value={mod.name}
                         onChange={(e) => setNewMod({ ...newMod, [group.id]: { ...mod, name: e.target.value } })}
                         onKeyDown={(e) => e.key === 'Enter' && handleAddModifier(group.id)}
@@ -229,7 +232,7 @@ export default function ModifierGroups() {
                         className="input w-28 py-2 text-sm"
                         type="number"
                         min="0"
-                        placeholder="+нарх"
+                        placeholder={t(lang, 'mods_price_ph')}
                         value={mod.price}
                         onChange={(e) => setNewMod({ ...newMod, [group.id]: { ...mod, price: e.target.value } })}
                       />

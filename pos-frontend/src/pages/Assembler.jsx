@@ -2,16 +2,12 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { getSales, markServed } from '../api/sales'
 import { PackageCheck, Clock, Bell, CheckCheck, RefreshCw, Table2, Utensils, ChevronRight, AlertCircle } from 'lucide-react'
 import { useToast } from '../components/Toast'
+import useSettingsStore from '../store/useSettingsStore'
+import { t } from '../lib/i18n'
 
 const fmt = (s) => {
   const d = new Date(s)
   return d.toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' })
-}
-
-const elapsed = (s) => {
-  const diff = Math.floor((Date.now() - new Date(s).getTime()) / 60000)
-  if (diff < 1) return 'Ҳозир'
-  return `${diff} дақ`
 }
 
 // Simple beep using Web Audio API — no external files needed
@@ -38,12 +34,19 @@ function doubleBeep() {
 
 export default function Assembler() {
   const toast = useToast()
+  const { language: lang = 'tg' } = useSettingsStore()
   const [ready, setReady] = useState([])
   const [preparing, setPreparing] = useState([])
   const [serving, setServing] = useState(null)
   const [tick, setTick] = useState(0)
   const [loading, setLoading] = useState(true)
   const prevReadyIds = useRef(new Set())
+
+  const elapsed = (s) => {
+    const diff = Math.floor((Date.now() - new Date(s).getTime()) / 60000)
+    if (diff < 1) return t(lang, 'assembler_elapsed_now')
+    return `${diff} ${t(lang, 'assembler_elapsed_min')}`
+  }
 
   const load = useCallback(async (quiet = false) => {
     if (!quiet) setLoading(true)
@@ -73,13 +76,13 @@ export default function Assembler() {
 
   // Auto-refresh every 10 seconds
   useEffect(() => {
-    const id = setInterval(() => { load(true); setTick((t) => t + 1) }, 10000)
+    const id = setInterval(() => { load(true); setTick((tk) => tk + 1) }, 10000)
     return () => clearInterval(id)
   }, [load])
 
   // Re-render elapsed every minute
   useEffect(() => {
-    const id = setInterval(() => setTick((t) => t + 1), 60000)
+    const id = setInterval(() => setTick((tk) => tk + 1), 60000)
     return () => clearInterval(id)
   }, [])
 
@@ -90,8 +93,8 @@ export default function Assembler() {
       setReady((prev) => prev.filter((o) => o.id !== order.id))
       prevReadyIds.current.delete(order.id)
       beep(660, 200, 0.3)
-      toast(`Фармоиш #${order.order_number} таҳвил дода шуд`, 'success')
-    } catch { toast('Хатогӣ рӯй дод', 'error') }
+      toast(`${t(lang, 'assembler_table')} #${order.order_number} ${t(lang, 'assembler_delivered_toast')}`, 'success')
+    } catch { toast(t(lang, 'error'), 'error') }
     finally { setServing(null) }
   }
 
@@ -107,20 +110,20 @@ export default function Assembler() {
             <PackageCheck size={20} className="text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-800">Ҷамъкунанда</h1>
-            <p className="text-xs text-gray-400">Фармоишҳои тайёрро ҷамъ карда таҳвил диҳед</p>
+            <h1 className="text-xl font-bold text-gray-800">{t(lang, 'assembler_title')}</h1>
+            <p className="text-xs text-gray-400">{t(lang, 'assembler_sub')}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           {ready.length > 0 && (
             <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-xl animate-pulse">
               <Bell size={15} className="text-emerald-600" />
-              <span className="font-bold text-emerald-700 text-sm">{ready.length} тайёр аст!</span>
+              <span className="font-bold text-emerald-700 text-sm">{ready.length} {t(lang, 'assembler_ready_count')}</span>
             </div>
           )}
           <button onClick={() => load()} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium transition-all">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-            Навсазӣ
+            {t(lang, 'assembler_refresh')}
           </button>
         </div>
       </div>
@@ -132,7 +135,7 @@ export default function Assembler() {
         <div className="lg:col-span-3 flex flex-col min-h-0">
           <div className="flex items-center gap-2 mb-3 shrink-0">
             <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
-            <h2 className="font-bold text-gray-700 text-sm uppercase tracking-wide">Тайёр — ҷамъ кунед</h2>
+            <h2 className="font-bold text-gray-700 text-sm uppercase tracking-wide">{t(lang, 'assembler_ready_col')}</h2>
             <span className="ml-auto bg-emerald-500 text-white text-xs px-2.5 py-0.5 rounded-full font-bold">{ready.length}</span>
           </div>
 
@@ -150,8 +153,8 @@ export default function Assembler() {
             ) : ready.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-gray-400 py-16">
                 <CheckCheck size={48} className="mb-3 opacity-15" />
-                <p className="font-semibold text-base">Ҳама тайёр аст</p>
-                <p className="text-xs mt-1 opacity-60">Фармоиши нав тайёр шуд, огоҳӣ мегирад</p>
+                <p className="font-semibold text-base">{t(lang, 'assembler_all_done')}</p>
+                <p className="text-xs mt-1 opacity-60">{t(lang, 'assembler_will_notify')}</p>
               </div>
             ) : (
               ready.map((order) => {
@@ -171,7 +174,7 @@ export default function Assembler() {
                         {order.table_number && (
                           <div className="flex items-center gap-1 bg-white/20 text-white text-sm px-3 py-1 rounded-full font-bold">
                             <Table2 size={13} />
-                            Миз {order.table_number}
+                            {t(lang, 'assembler_table')} {order.table_number}
                           </div>
                         )}
                       </div>
@@ -214,8 +217,8 @@ export default function Assembler() {
                         } disabled:opacity-60 disabled:cursor-not-allowed`}
                       >
                         {isServing
-                          ? <><RefreshCw size={20} className="animate-spin" /> Нигоҳ мешавад...</>
-                          : <><CheckCheck size={20} /> Ба муштарӣ таҳвил дода шуд</>
+                          ? <><RefreshCw size={20} className="animate-spin" /> {t(lang, 'assembler_saving')}</>
+                          : <><CheckCheck size={20} /> {t(lang, 'assembler_deliver_btn')}</>
                         }
                       </button>
                     </div>
@@ -230,7 +233,7 @@ export default function Assembler() {
         <div className="lg:col-span-2 flex flex-col min-h-0">
           <div className="flex items-center gap-2 mb-3 shrink-0">
             <div className="w-3 h-3 bg-blue-400 rounded-full" />
-            <h2 className="font-bold text-gray-500 text-sm uppercase tracking-wide">Пухта шуда</h2>
+            <h2 className="font-bold text-gray-500 text-sm uppercase tracking-wide">{t(lang, 'assembler_preparing_col')}</h2>
             <span className="ml-auto bg-blue-400 text-white text-xs px-2.5 py-0.5 rounded-full font-bold">{preparing.length}</span>
           </div>
 
@@ -238,7 +241,7 @@ export default function Assembler() {
             {preparing.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-gray-300 py-10">
                 <Utensils size={32} className="mb-2 opacity-30" />
-                <p className="text-sm">Дар навбат фармоише нест</p>
+                <p className="text-sm">{t(lang, 'assembler_no_queue')}</p>
               </div>
             ) : (
               preparing.map((order) => (
@@ -262,7 +265,7 @@ export default function Assembler() {
                       <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
                         order.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
                       }`}>
-                        {order.status === 'pending' ? 'Нав' : 'Тайёр мешавад'}
+                        {order.status === 'pending' ? t(lang, 'assembler_status_new') : t(lang, 'assembler_status_cooking')}
                       </span>
                     </div>
                   </div>

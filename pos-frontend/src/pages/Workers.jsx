@@ -3,18 +3,19 @@ import { getWorkers, createWorker, updateWorker, deleteWorker, toggleWorker } fr
 import { Plus, Edit, Trash2, X, Mail, Phone, TrendingUp, UserX, Search } from 'lucide-react'
 import { CardSkeleton } from '../components/Skeleton'
 import { useToast } from '../components/Toast'
-
-const ROLES = [
-  { value: 'admin',     label: 'Администратор', color: 'bg-violet-100 text-violet-700',   avatar: 'from-violet-400 to-purple-500' },
-  { value: 'manager',   label: 'Менеҷер',       color: 'bg-blue-100 text-blue-700',       avatar: 'from-blue-400 to-indigo-500' },
-  { value: 'cashier',   label: 'Кассир',        color: 'bg-emerald-100 text-emerald-700', avatar: 'from-emerald-400 to-teal-500' },
-  { value: 'chef',      label: 'Ошпаз',         color: 'bg-amber-100 text-amber-700',     avatar: 'from-amber-400 to-orange-500' },
-  { value: 'assembler', label: 'Ҷамъкунанда',   color: 'bg-teal-100 text-teal-700',       avatar: 'from-teal-400 to-emerald-500' },
-]
+import useSettingsStore from '../store/useSettingsStore'
+import { t } from '../lib/i18n'
 
 const fmt = (n) => Number(n || 0).toLocaleString('ru', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-function Modal({ worker, onSave, onClose, toast }) {
+function Modal({ worker, onSave, onClose, toast, lang }) {
+  const ROLES = [
+    { value: 'admin',     label: t(lang, 'role_admin'),     color: 'bg-violet-100 text-violet-700',   avatar: 'from-violet-400 to-purple-500' },
+    { value: 'manager',   label: t(lang, 'role_manager'),   color: 'bg-blue-100 text-blue-700',       avatar: 'from-blue-400 to-indigo-500' },
+    { value: 'cashier',   label: t(lang, 'role_cashier'),   color: 'bg-emerald-100 text-emerald-700', avatar: 'from-emerald-400 to-teal-500' },
+    { value: 'chef',      label: t(lang, 'role_chef'),      color: 'bg-amber-100 text-amber-700',     avatar: 'from-amber-400 to-orange-500' },
+    { value: 'assembler', label: t(lang, 'role_assembler'), color: 'bg-teal-100 text-teal-700',       avatar: 'from-teal-400 to-emerald-500' },
+  ]
   const [form, setForm] = useState({
     username: worker?.username || '', first_name: worker?.first_name || '',
     last_name: worker?.last_name || '', phone: worker?.phone || '',
@@ -26,16 +27,16 @@ function Modal({ worker, onSave, onClose, toast }) {
 
   const submit = async (e) => {
     e.preventDefault()
-    if (!worker && form.password !== form.password2) { toast('Паролҳо мувофиқ нестанд', 'error'); return }
+    if (!worker && form.password !== form.password2) { toast(t(lang, 'workers_pw_mismatch'), 'error'); return }
     setSaving(true)
     try {
       const data = { ...form }
       if (!data.password) { delete data.password; delete data.password2 }
       if (worker) await updateWorker(worker.id, data)
       else await createWorker(data)
-      toast(worker ? 'Корманд навсозӣ шуд' : 'Корманди нав сохта шуд')
+      toast(worker ? t(lang, 'workers_updated') : t(lang, 'workers_created'))
       onSave()
-    } catch (e) { toast(JSON.stringify(e.response?.data || 'Хатогӣ'), 'error') }
+    } catch (e) { toast(JSON.stringify(e.response?.data || t(lang, 'error')), 'error') }
     finally { setSaving(false) }
   }
 
@@ -43,32 +44,32 @@ function Modal({ worker, onSave, onClose, toast }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto animate-scale-in">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-bold text-gray-800">{worker ? 'Корманд таҳрир' : 'Корманди нав'}</h2>
+          <h2 className="font-bold text-gray-800">{worker ? t(lang, 'workers_edit_title') : t(lang, 'workers_new_title')}</h2>
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 transition-colors">
             <X size={18} className="text-gray-400" />
           </button>
         </div>
         <form onSubmit={submit} className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-3">
-            <div><label className="label">Ном</label><input className="input" {...f('first_name')} /></div>
-            <div><label className="label">Насаб</label><input className="input" {...f('last_name')} /></div>
+            <div><label className="label">{t(lang, 'workers_name')}</label><input className="input" {...f('first_name')} /></div>
+            <div><label className="label">{t(lang, 'workers_surname')}</label><input className="input" {...f('last_name')} /></div>
           </div>
-          <div><label className="label">Логин *</label><input className="input" required {...f('username')} /></div>
-          <div><label className="label">Эл. почта</label><input className="input" type="email" {...f('email')} /></div>
-          <div><label className="label">Телефон</label><input className="input" {...f('phone')} /></div>
+          <div><label className="label">{t(lang, 'workers_login')}</label><input className="input" required {...f('username')} /></div>
+          <div><label className="label">{t(lang, 'workers_email')}</label><input className="input" type="email" {...f('email')} /></div>
+          <div><label className="label">{t(lang, 'workers_phone')}</label><input className="input" {...f('phone')} /></div>
           <div>
-            <label className="label">Нақш *</label>
+            <label className="label">{t(lang, 'workers_role')}</label>
             <select className="input" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
               {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
             </select>
           </div>
-          <div><label className="label">Парол {worker ? '(агар тағйир диҳед)' : '*'}</label>
+          <div><label className="label">{t(lang, 'workers_password')} {worker ? t(lang, 'workers_pw_if_change') : '*'}</label>
             <input className="input" type="password" required={!worker} {...f('password')} /></div>
-          {!worker && <div><label className="label">Паролро такрор *</label>
+          {!worker && <div><label className="label">{t(lang, 'workers_pw_repeat')}</label>
             <input className="input" type="password" required {...f('password2')} /></div>}
           <div className="flex gap-3 pt-2">
-            <button type="button" className="btn-secondary flex-1" onClick={onClose}>Бекор</button>
-            <button type="submit" disabled={saving} className="btn-primary flex-1">{saving ? 'Сабт...' : 'Сабт кунед'}</button>
+            <button type="button" className="btn-secondary flex-1" onClick={onClose}>{t(lang, 'workers_cancel')}</button>
+            <button type="submit" disabled={saving} className="btn-primary flex-1">{saving ? t(lang, 'workers_saving') : t(lang, 'workers_save')}</button>
           </div>
         </form>
       </div>
@@ -78,6 +79,14 @@ function Modal({ worker, onSave, onClose, toast }) {
 
 export default function Workers() {
   const toast = useToast()
+  const { language: lang = 'tg' } = useSettingsStore()
+  const ROLES = [
+    { value: 'admin',     label: t(lang, 'role_admin'),     color: 'bg-violet-100 text-violet-700',   avatar: 'from-violet-400 to-purple-500' },
+    { value: 'manager',   label: t(lang, 'role_manager'),   color: 'bg-blue-100 text-blue-700',       avatar: 'from-blue-400 to-indigo-500' },
+    { value: 'cashier',   label: t(lang, 'role_cashier'),   color: 'bg-emerald-100 text-emerald-700', avatar: 'from-emerald-400 to-teal-500' },
+    { value: 'chef',      label: t(lang, 'role_chef'),      color: 'bg-amber-100 text-amber-700',     avatar: 'from-amber-400 to-orange-500' },
+    { value: 'assembler', label: t(lang, 'role_assembler'), color: 'bg-teal-100 text-teal-700',       avatar: 'from-teal-400 to-emerald-500' },
+  ]
   const [workers, setWorkers] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -94,36 +103,36 @@ export default function Workers() {
   useEffect(() => { load() }, [])
 
   const handleDelete = async (id) => {
-    if (!confirm('Корманд нест шавад?')) return
-    try { await deleteWorker(id); toast('Корманд нест шуд', 'warning'); load() }
-    catch (e) { toast(e.response?.data?.detail || 'Хатогӣ', 'error') }
+    if (!confirm(t(lang, 'workers_del_confirm'))) return
+    try { await deleteWorker(id); toast(t(lang, 'workers_deleted'), 'warning'); load() }
+    catch (e) { toast(e.response?.data?.detail || t(lang, 'error'), 'error') }
   }
 
   const handleToggle = async (id) => {
     try { await toggleWorker(id); load() }
-    catch (e) { toast(e.response?.data?.detail || 'Хатогӣ', 'error') }
+    catch (e) { toast(e.response?.data?.detail || t(lang, 'error'), 'error') }
   }
 
   const filtered = workers.filter((w) => !search || (w.username + (w.full_name || '') + (w.email || '') + (w.phone || '')).toLowerCase().includes(search.toLowerCase()))
 
   return (
     <div className="space-y-4">
-      {modal?.type === 'create' && <Modal toast={toast} onSave={() => { setModal(null); load() }} onClose={() => setModal(null)} />}
-      {modal?.type === 'edit' && <Modal worker={modal.worker} toast={toast} onSave={() => { setModal(null); load() }} onClose={() => setModal(null)} />}
+      {modal?.type === 'create' && <Modal toast={toast} lang={lang} onSave={() => { setModal(null); load() }} onClose={() => setModal(null)} />}
+      {modal?.type === 'edit' && <Modal worker={modal.worker} toast={toast} lang={lang} onSave={() => { setModal(null); load() }} onClose={() => setModal(null)} />}
 
       <div className="flex items-center justify-between animate-fade-up">
         <div>
-          <h1 className="text-xl font-bold text-gray-800">Кормандон</h1>
-          <p className="text-sm text-gray-400">{workers.length} корманд</p>
+          <h1 className="text-xl font-bold text-gray-800">{t(lang, 'workers_title')}</h1>
+          <p className="text-sm text-gray-400">{workers.length} {t(lang, 'workers_title').toLowerCase()}</p>
         </div>
         <button className="btn-primary flex items-center gap-2" onClick={() => setModal({ type: 'create' })}>
-          <Plus size={16} /> Илова
+          <Plus size={16} /> {t(lang, 'workers_add')}
         </button>
       </div>
 
       <div className="relative animate-fade-up" style={{ animationDelay: '60ms' }}>
         <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-        <input className="input pl-10 text-sm" placeholder="Ҷустуҷӯи корманд..." value={search} onChange={(e) => setSearch(e.target.value)} />
+        <input className="input pl-10 text-sm" placeholder={t(lang, 'workers_search_ph')} value={search} onChange={(e) => setSearch(e.target.value)} />
       </div>
 
       {loading ? <CardSkeleton count={6} /> : (
@@ -159,20 +168,20 @@ export default function Workers() {
                     </div>
                   )}
                   {!w.email && !w.phone && (
-                    <p className="text-xs text-gray-300 italic">Маълумот нест</p>
+                    <p className="text-xs text-gray-300 italic">{t(lang, 'workers_no_info')}</p>
                   )}
                 </div>
 
                 <div className="flex gap-2 pt-3 border-t border-gray-100">
                   <button onClick={() => setModal({ type: 'edit', worker: w })}
                     className="flex-1 flex items-center justify-center gap-1.5 text-xs border border-gray-200 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 py-2 rounded-xl transition-all">
-                    <Edit size={12} /> Таҳрир
+                    <Edit size={12} /> {t(lang, 'workers_edit')}
                   </button>
                   <button onClick={() => handleToggle(w.id)}
                     className={`flex-1 flex items-center justify-center gap-1.5 text-xs border py-2 rounded-xl transition-all ${
                       w.is_active ? 'border-orange-200 text-orange-600 hover:bg-orange-50' : 'border-emerald-200 text-emerald-600 hover:bg-emerald-50'
                     }`}>
-                    <UserX size={12} /> {w.is_active ? 'Хомӯш' : 'Фаъол'}
+                    <UserX size={12} /> {w.is_active ? t(lang, 'workers_deactivate') : t(lang, 'workers_activate')}
                   </button>
                   <button onClick={() => handleDelete(w.id)}
                     className="w-9 h-9 flex items-center justify-center bg-red-50 hover:bg-red-500 text-red-400 hover:text-white rounded-xl transition-all border border-red-100 hover:border-red-500">
@@ -183,7 +192,7 @@ export default function Workers() {
             )
           })}
           {!filtered.length && (
-            <div className="col-span-full text-center py-16 text-gray-400">Корманд топилмад</div>
+            <div className="col-span-full text-center py-16 text-gray-400">{t(lang, 'workers_not_found')}</div>
           )}
         </div>
       )}
