@@ -215,6 +215,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         ingredient_id = request.data.get('ingredient_id')
         quantity      = request.data.get('quantity')
+        unit          = request.data.get('unit', 'гр')
         product_ids   = request.data.get('product_ids', [])
 
         if not ingredient_id or not quantity or not product_ids:
@@ -228,7 +229,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            quantity = int(quantity)
+            quantity = float(quantity)
             if quantity <= 0:
                 raise ValueError
         except (ValueError, TypeError):
@@ -250,7 +251,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                 obj, created = ProductIngredient.objects.update_or_create(
                     product=product,
                     ingredient=ingredient,
-                    defaults={'quantity': quantity},
+                    defaults={'quantity': quantity, 'unit': unit},
                 )
                 updated.append(product.id)
 

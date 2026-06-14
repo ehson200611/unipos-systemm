@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getProducts, getCategories, createProduct, updateProduct, deleteProduct, getRecipe, saveRecipe, getIngredients } from '../api/products'
-import { Plus, Edit, Trash2, Search, X, Package, FlaskConical, BookOpen, Loader, ImagePlus } from 'lucide-react'
+import { getProducts, getCategories, createProduct, updateProduct, deleteProduct, getRecipe, saveRecipe, getIngredients, bulkAssignIngredient } from '../api/products'
+import { Plus, Edit, Trash2, Search, X, Package, FlaskConical, BookOpen, Loader, ImagePlus, Layers } from 'lucide-react'
 import { GridSkeleton } from '../components/Skeleton'
 import { useToast } from '../components/Toast'
 import useSettingsStore from '../store/useSettingsStore'
@@ -313,6 +313,177 @@ function Modal({ product, categories, onSave, onClose, toast, lang }) {
   )
 }
 
+// ── Bulk Assign Modal ─────────────────────────────────────────────────────────
+
+function BulkAssignModal({ onClose, toast }) {
+  const UNITS = ['гр', 'кг', 'мл', 'л', 'дона']
+  const [ingredients, setIngredients] = useState([])
+  const [menuProducts, setMenuProducts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+
+  const [ingId, setIngId] = useState('')
+  const [qty, setQty] = useState(1)
+  const [unit, setUnit] = useState('гр')
+  const [selected, setSelected] = useState([])
+
+  useEffect(() => {
+    Promise.all([getIngredients(), getProducts(), getCategories()])
+      .then(([i, p, c]) => {
+        setIngredients(i.data.results || i.data)
+        const menu = (p.data.results || p.data).filter((x) => x.is_active && !x.is_ingredient)
+        setMenuProducts(menu)
+        setCategories(c.data.results || c.data)
+      })
+      .finally(() => setLoading(false))
+  }, [])
+
+  const toggleAll = (catId) => {
+    const ids = menuProducts.filter((p) => p.category === catId).map((p) => p.id)
+    const allSelected = ids.every((id) => selected.includes(id))
+    if (allSelected) setSelected(selected.filter((id) => !ids.includes(id)))
+    else setSelected([...new Set([...selected, ...ids])])
+  }
+
+  const toggle = (id) => setSelected((prev) =>
+    prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+  )
+
+  const handleSubmit = async () => {
+    if (!ingId) { toast('Ингредиентро интихоб кунед', 'error'); return }
+    if (!selected.length) { toast('Ҳадди ақал 1 маҳсулот интихоб кунед', 'error'); return }
+    setSaving(true)
+    try {
+      const res = await bulkAssignIngredient({
+        ingredient_id: Number(ingId),
+        quantity: Number(qty),
+        unit,
+        product_ids: selected,
+      })
+      toast(`${res.data.updated?.length || selected.length} маҳсулот навсозӣ шуд`, 'success')
+      onClose()
+    } catch (e) {
+      toast(e.response?.data?.detail || 'Хато', 'error')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const byCategory = categories.map((c) => ({
+    cat: c,
+    prods: menuProducts.filter((p) => p.category === c.id),
+  })).filter((g) => g.prods.length > 0)
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-scale-in">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
+          <div>
+            <h2 className="font-bold text-gray-800 flex items-center gap-2">
+              <Layers size={16} className="text-indigo-500" /> Як ингредиент → якчанд маҳсулот
+            </h2>
+            <p className="text-xs text-gray-400 mt-0.5">Ингредиент ва миқдорро интихоб кунед, маҳсулотҳоро қайд кунед</p>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100">
+            <X size={18} className="text-gray-400" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 space-y-5">
+          {loading ? (
+            <div className="flex justify-center py-10"><Loader size={24} className="animate-spin text-indigo-400" /></div>
+          ) : (
+            <>
+              {/* Ingredient + qty + unit */}
+              <div className="flex gap-3 items-end flex-wrap">
+                <div className="flex-1 min-w-40">
+                  <label className="label">Ингредиент</label>
+                  <select className="input" value={ingId} onChange={(e) => setIngId(e.target.value)}>
+                    <option value="">— Интихоб кунед —</option>
+                    {ingredients.map((i) => (
+                      <option key={i.id} value={i.id}>{i.name} ({i.sku || 'дона'})</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-28">
+                  <label className="label">Миқдор</label>
+                  <input className="input" type="number" min="0.001" step="0.1"
+                    value={qty} onChange={(e) => setQty(e.target.value)} />
+                </div>
+                <div className="w-20">
+                  <label className="label">Воҳид</label>
+                  <select className="input" value={unit} onChange={(e) => setUnit(e.target.value)}>
+                    {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              {/* Product list by category */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-gray-700">Маҳсулотҳо ({selected.length} интихоб шуд)</p>
+                  <div className="flex gap-2">
+                    <button onClick={() => setSelected(menuProducts.map((p) => p.id))}
+                      className="text-xs text-indigo-600 hover:underline">Ҳама</button>
+                    <button onClick={() => setSelected([])}
+                      className="text-xs text-gray-400 hover:underline">Бекор</button>
+                  </div>
+                </div>
+
+                {byCategory.map(({ cat, prods }) => {
+                  const catIds = prods.map((p) => p.id)
+                  const allSel = catIds.every((id) => selected.includes(id))
+                  const someSel = catIds.some((id) => selected.includes(id))
+                  return (
+                    <div key={cat.id} className="border border-gray-100 rounded-xl overflow-hidden">
+                      <button
+                        onClick={() => toggleAll(cat.id)}
+                        className="w-full flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+                      >
+                        <span className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
+                          allSel ? 'bg-indigo-600 border-indigo-600' : someSel ? 'bg-indigo-200 border-indigo-400' : 'border-gray-300'
+                        }`}>
+                          {(allSel || someSel) && <span className="w-2 h-2 bg-white rounded-sm" />}
+                        </span>
+                        <span className="text-sm font-semibold text-gray-700">{cat.name}</span>
+                        <span className="text-xs text-gray-400 ml-auto">{prods.length} та</span>
+                      </button>
+                      <div className="divide-y divide-gray-50">
+                        {prods.map((p) => (
+                          <label key={p.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-indigo-50/40 cursor-pointer transition-colors">
+                            <span className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
+                              selected.includes(p.id) ? 'bg-indigo-600 border-indigo-600' : 'border-gray-300'
+                            }`}>
+                              {selected.includes(p.id) && <span className="w-2 h-2 bg-white rounded-sm" />}
+                            </span>
+                            <input type="checkbox" className="sr-only" checked={selected.includes(p.id)}
+                              onChange={() => toggle(p.id)} />
+                            <span className="text-sm text-gray-700">{p.name}</span>
+                            <span className="text-xs text-gray-400 ml-auto">{p.price} сом</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="px-6 py-4 border-t border-gray-100 flex gap-3 shrink-0">
+          <button className="btn-secondary flex-1" onClick={onClose}>Бекор кунед</button>
+          <button className="btn-primary flex-1 flex items-center justify-center gap-2" onClick={handleSubmit} disabled={saving}>
+            {saving ? <Loader size={14} className="animate-spin" /> : <Layers size={14} />}
+            {saving ? 'Иҷро мешавад...' : `${selected.length} маҳсулотга илова кун`}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ── Main Products Page ────────────────────────────────────────────────────────
 
 export default function Products() {
@@ -325,6 +496,7 @@ export default function Products() {
   const [catFilter, setCatFilter] = useState(null)
   const [modal, setModal] = useState(null)
   const [recipeProduct, setRecipeProduct] = useState(null)
+  const [bulkModal, setBulkModal] = useState(false)
 
   const load = () => {
     setLoading(true)
@@ -368,15 +540,23 @@ export default function Products() {
       {recipeProduct && (
         <RecipeModal product={recipeProduct} onClose={() => setRecipeProduct(null)} />
       )}
+      {bulkModal && (
+        <BulkAssignModal toast={toast} onClose={() => setBulkModal(false)} />
+      )}
 
       <div className="flex items-center justify-between animate-fade-up">
         <div>
           <h1 className="text-xl font-bold text-gray-800">{t(lang, 'products_title')}</h1>
           <p className="text-sm text-gray-400">{menuProducts.length} {t(lang, 'products_title').toLowerCase()}</p>
         </div>
-        <button className="btn-primary flex items-center gap-2" onClick={() => setModal({ type: 'create' })}>
-          <Plus size={16} /> {t(lang, 'products_add')}
-        </button>
+        <div className="flex gap-2">
+          <button className="btn-secondary flex items-center gap-2" onClick={() => setBulkModal(true)}>
+            <Layers size={16} /> Якбора илова
+          </button>
+          <button className="btn-primary flex items-center gap-2" onClick={() => setModal({ type: 'create' })}>
+            <Plus size={16} /> {t(lang, 'products_add')}
+          </button>
+        </div>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap animate-fade-up" style={{ animationDelay: '60ms' }}>

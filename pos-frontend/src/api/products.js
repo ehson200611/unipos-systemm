@@ -19,6 +19,7 @@ export const getColors = () => client.get('/colors/')
 export const getRecipe = (id) => client.get(`/products/${id}/recipe/`)
 export const saveRecipe = (id, data) => client.put(`/products/${id}/recipe/`, data)
 export const getIngredients = (params) => client.get('/products/', { params: { is_ingredient: true, ...params } })
+export const bulkAssignIngredient = (data) => client.post('/products/bulk-assign-ingredient/', data)
 
 export const getMenu = (params) => client.get('/menu/', { params })
 export const getMenuCategories = () => client.get('/menu/categories/')
