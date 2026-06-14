@@ -169,8 +169,8 @@ export default function POS() {
   const toast = useToast()
   const settings = useSettingsStore()
   const { language: lang = 'tg' } = settings
-  const biz = BUSINESS_TYPES[settings.businessType]
-  const isFastFood = settings.businessType === 'fastfood'
+  const biz = BUSINESS_TYPES[settings.businessType] || BUSINESS_TYPES['bubbletea']
+  const isFastFood = false
 
   const PAY = [
     { value: 'cash',      label: t(lang, 'pay_cash'), icon: Banknote,   active: 'bg-emerald-500' },

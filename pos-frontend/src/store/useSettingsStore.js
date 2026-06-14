@@ -16,7 +16,12 @@ const DEFAULTS = {
 }
 
 const saved = (() => {
-  try { return JSON.parse(localStorage.getItem('pos_settings') || '{}') } catch { return {} }
+  try {
+    const s = JSON.parse(localStorage.getItem('pos_settings') || '{}')
+    // businessType must always be bubbletea — reset old values
+    if (s.businessType && s.businessType !== 'bubbletea') s.businessType = 'bubbletea'
+    return s
+  } catch { return {} }
 })()
 
 const useSettingsStore = create((set, get) => ({

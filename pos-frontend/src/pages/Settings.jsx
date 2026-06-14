@@ -7,7 +7,7 @@ import { t } from '../lib/i18n'
 import {
   User, Store, Save, Loader,
   AlertTriangle, Settings2, ShieldCheck, Pencil, Phone,
-  Mail, Hash, Table2, Bell, ImagePlus, Trash2, Globe, Check,
+  Mail, Hash, Table2, Bell, ImagePlus, Trash2, Globe, Check, CheckCircle2,
   Send, Plus, X, DollarSign, BotMessageSquare, QrCode, Upload,
 } from 'lucide-react'
 import { useToast } from '../components/Toast'
