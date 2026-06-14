@@ -30,8 +30,9 @@ function Modal({ worker, onSave, onClose, toast, lang }) {
     if (!worker && form.password !== form.password2) { toast(t(lang, 'workers_pw_mismatch'), 'error'); return }
     setSaving(true)
     try {
-      const data = { ...form }
-      if (!data.password) { delete data.password; delete data.password2 }
+      const data = { ...form, confirm_password: form.password2 }
+      delete data.password2
+      if (!data.password) { delete data.password; delete data.confirm_password }
       if (worker) await updateWorker(worker.id, data)
       else await createWorker(data)
       toast(worker ? t(lang, 'workers_updated') : t(lang, 'workers_created'))
