@@ -9,17 +9,15 @@ import { t } from '../lib/i18n'
 import {
   LayoutDashboard, ShoppingCart, Package, Warehouse, Grid3X3,
   ClipboardList, Clock, Users, BarChart2, Settings, LogOut,
-  AlertCircle, Timer, Menu, ChevronLeft, ChefHat, PackageCheck,
+  AlertCircle, Timer, Menu, ChevronLeft,
   LayoutGrid, SlidersHorizontal, ClipboardCheck,
   UserCircle, Truck
 } from 'lucide-react'
 
 const BASE_NAV = [
-  { to: '/',           icon: LayoutDashboard,   lk: 'nav_dashboard',  roles: ['admin','manager','cashier','chef','assembler'], color: 'bg-blue-500' },
+  { to: '/',           icon: LayoutDashboard,   lk: 'nav_dashboard',  roles: ['admin','manager','cashier'], color: 'bg-blue-500' },
   { to: '/pos',        icon: ShoppingCart,      lk: 'nav_pos',        roles: ['admin','manager','cashier'],                    color: 'bg-emerald-500' },
   { to: '/table-map',  icon: LayoutGrid,        lk: 'nav_table_map',  roles: ['admin','manager','cashier'],                    color: 'bg-sky-500' },
-  { to: '/kitchen',    icon: ChefHat,           lk: 'nav_kitchen',    roles: ['admin','manager','chef'],                       color: 'bg-orange-500' },
-  { to: '/assembler',  icon: PackageCheck,      lk: 'nav_assembler',  roles: ['admin','manager','assembler'],                  color: 'bg-teal-500' },
   { to: '/customers',  icon: UserCircle,        lk: 'nav_customers',  roles: ['admin','manager','cashier'],                    color: 'bg-indigo-500' },
   { to: '/products',   icon: Package,           lk: 'nav_products',   roles: ['admin','manager'],                              color: 'bg-orange-500' },
   { to: '/modifiers',  icon: SlidersHorizontal, lk: 'nav_modifiers',  roles: ['admin','manager'],                              color: 'bg-purple-500' },
@@ -27,7 +25,7 @@ const BASE_NAV = [
   { to: '/stocktake',  icon: ClipboardCheck,    lk: 'nav_stocktake',  roles: ['admin','manager'],                              color: 'bg-violet-500' },
   { to: '/categories', icon: Grid3X3,           lk: 'nav_categories', roles: ['admin','manager'],                              color: 'bg-violet-500' },
   { to: '/suppliers',  icon: Truck,             lk: 'nav_suppliers',  roles: ['admin','manager'],                              color: 'bg-teal-600' },
-  { to: '/orders',     icon: ClipboardList,     lk: 'nav_orders',     roles: ['admin','manager','cashier','chef','assembler'],  color: 'bg-amber-500' },
+  { to: '/orders',     icon: ClipboardList,     lk: 'nav_orders',     roles: ['admin','manager','cashier'],                    color: 'bg-amber-500' },
   { to: '/shifts',     icon: Clock,             lk: 'nav_shifts',     roles: ['admin','manager','cashier'],                    color: 'bg-indigo-500' },
   { to: '/workers',    icon: Users,             lk: 'nav_workers',    roles: ['admin'],                                        color: 'bg-rose-500' },
   { to: '/reports',    icon: BarChart2,         lk: 'nav_reports',    roles: ['admin','manager'],                              color: 'bg-cyan-500' },

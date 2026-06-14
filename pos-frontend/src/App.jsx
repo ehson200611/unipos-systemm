@@ -15,8 +15,6 @@ import Workers from './pages/Workers'
 import Shifts from './pages/Shifts'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
-import Kitchen from './pages/Kitchen'
-import Assembler from './pages/Assembler'
 import TableMap from './pages/TableMap'
 import ModifierGroups from './pages/ModifierGroups'
 import Stocktake from './pages/Stocktake'
@@ -56,8 +54,6 @@ function AppContent() {
         <Route path="/customers" element={<PrivateRoute roles={['admin','manager','cashier']}><Customers /></PrivateRoute>} />
         <Route path="/suppliers" element={<PrivateRoute roles={['admin','manager']}><Suppliers /></PrivateRoute>} />
         <Route path="/settings"  element={<PrivateRoute><Settings /></PrivateRoute>} />
-        <Route path="/kitchen"   element={<PrivateRoute roles={['admin','manager','chef']}><Kitchen /></PrivateRoute>} />
-        <Route path="/assembler" element={<PrivateRoute roles={['admin','manager','assembler']}><Assembler /></PrivateRoute>} />
         <Route path="/table-map" element={<PrivateRoute roles={['admin','manager','cashier']}><TableMap /></PrivateRoute>} />
         <Route path="/modifiers" element={<PrivateRoute roles={['admin','manager']}><ModifierGroups /></PrivateRoute>} />
         <Route path="/stocktake" element={<PrivateRoute roles={['admin','manager']}><Stocktake /></PrivateRoute>} />
