@@ -63,9 +63,14 @@ export default function ModifierGroups() {
     if (!m.name?.trim()) return
     setSaving(true)
     try {
-      await addModifier(groupId, { name: m.name, price: parseFloat(m.price) || 0, sort_order: 0 })
+      await addModifier(groupId, {
+        name: m.name,
+        price: parseFloat(m.price) || 0,
+        recipe_multiplier: parseFloat(m.recipe_multiplier) || 1.0,
+        sort_order: 0,
+      })
       toast(t(lang, 'mods_mod_added'), 'success')
-      setNewMod({ ...newMod, [groupId]: { name: '', price: '' } })
+      setNewMod({ ...newMod, [groupId]: { name: '', price: '', recipe_multiplier: '' } })
       load()
     } catch { toast(t(lang, 'error'), 'error') }
     finally { setSaving(false) }
@@ -204,6 +209,11 @@ export default function ModifierGroups() {
                           <div key={m.id} className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2.5">
                             <span className="text-sm font-semibold text-gray-700">{m.name}</span>
                             <div className="flex items-center gap-3">
+                              {m.recipe_multiplier && m.recipe_multiplier !== 1 && (
+                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">
+                                  ×{m.recipe_multiplier}
+                                </span>
+                              )}
                               <span className="text-sm font-bold text-indigo-600">
                                 {m.price > 0 ? `+${fmt(m.price)} ${t(lang, 'currency')}` : t(lang, 'mods_free')}
                               </span>
@@ -220,21 +230,31 @@ export default function ModifierGroups() {
                     </div>
 
                     {/* Add new modifier */}
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       <input
-                        className="input flex-1 py-2 text-sm"
+                        className="input flex-1 min-w-24 py-2 text-sm"
                         placeholder={t(lang, 'mods_variant_ph')}
                         value={mod.name}
                         onChange={(e) => setNewMod({ ...newMod, [group.id]: { ...mod, name: e.target.value } })}
                         onKeyDown={(e) => e.key === 'Enter' && handleAddModifier(group.id)}
                       />
                       <input
-                        className="input w-28 py-2 text-sm"
+                        className="input w-24 py-2 text-sm"
                         type="number"
                         min="0"
                         placeholder={t(lang, 'mods_price_ph')}
                         value={mod.price}
                         onChange={(e) => setNewMod({ ...newMod, [group.id]: { ...mod, price: e.target.value } })}
+                      />
+                      <input
+                        className="input w-20 py-2 text-sm"
+                        type="number"
+                        min="0.1"
+                        step="0.1"
+                        placeholder="×1.0"
+                        title="Зарбкунандаи рецепт (0.7мл = 1.4)"
+                        value={mod.recipe_multiplier}
+                        onChange={(e) => setNewMod({ ...newMod, [group.id]: { ...mod, recipe_multiplier: e.target.value } })}
                       />
                       <button
                         onClick={() => handleAddModifier(group.id)}
@@ -244,6 +264,7 @@ export default function ModifierGroups() {
                         <Plus size={15} />
                       </button>
                     </div>
+                    <p className="text-xs text-gray-400 mt-1">× — зарбкунандаи рецепт (холӣ = ×1.0)</p>
                   </div>
                 )}
               </div>

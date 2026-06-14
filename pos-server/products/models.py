@@ -116,6 +116,7 @@ class Modifier(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     is_available = models.BooleanField(default=True)
     sort_order = models.PositiveSmallIntegerField(default=0)
+    recipe_multiplier = models.FloatField(default=1.0, help_text='Зарбкунандаи рецепт: 0.7мл = 1.4, 0.5мл = 1.0')
 
     class Meta:
         ordering = ['sort_order', 'name']

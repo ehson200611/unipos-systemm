@@ -67,7 +67,7 @@ class ColorStockSerializer(serializers.ModelSerializer):
 class ModifierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Modifier
-        fields = ['id', 'name', 'price', 'is_available', 'sort_order']
+        fields = ['id', 'name', 'price', 'is_available', 'sort_order', 'recipe_multiplier']
 
 
 class ModifierGroupSerializer(serializers.ModelSerializer):

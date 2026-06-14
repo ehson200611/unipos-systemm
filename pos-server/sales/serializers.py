@@ -90,11 +90,14 @@ class SaleCreateSerializer(serializers.Serializer):
                 prod_lock.stock_quantity -= qty
                 prod_lock.save(update_fields=['stock_quantity', 'updated_at'])
 
-            # Deduct recipe ingredients with unit conversion
+            # Deduct recipe ingredients with unit conversion and modifier multiplier
             from products.models import ProductIngredient, convert_units
+            recipe_multiplier = 1.0
+            for mod in modifiers:
+                recipe_multiplier *= float(mod.get('recipe_multiplier', 1.0) or 1.0)
             for line in ProductIngredient.objects.filter(product=product).select_related('ingredient'):
                 ing = Product.objects.select_for_update(of=('self',)).get(id=line.ingredient_id)
-                recipe_qty = float(line.quantity) * qty
+                recipe_qty = float(line.quantity) * qty * recipe_multiplier
                 warehouse_unit = ing.sku or 'дона'
                 recipe_unit = line.unit or warehouse_unit
                 deduct = convert_units(recipe_qty, recipe_unit, warehouse_unit)
