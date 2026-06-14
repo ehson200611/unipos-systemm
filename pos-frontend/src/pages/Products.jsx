@@ -332,7 +332,7 @@ export default function Products() {
 
       <div className="flex items-center gap-2 flex-wrap animate-fade-up" style={{ animationDelay: '60ms' }}>
         <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
           <input className="input pl-9 text-sm w-52" placeholder={t(lang, 'search')} value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
         <button onClick={() => setCatFilter(null)}

@@ -120,7 +120,7 @@ export default function Customers() {
 
       {/* Search */}
       <div className="relative animate-fade-up">
-        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
         <input className="input pl-10 w-full" placeholder={t(lang, 'crm_search_ph')}
           value={search} onChange={e => setSearch(e.target.value)} />
       </div>

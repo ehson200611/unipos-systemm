@@ -86,7 +86,7 @@ export default function Orders() {
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3 animate-fade-up" style={{ animationDelay: '120ms' }}>
         <div className="relative">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
           <input className="input pl-10 text-sm" placeholder={t(lang, 'orders_search_ph')} value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
         <div className="flex gap-2 flex-wrap">

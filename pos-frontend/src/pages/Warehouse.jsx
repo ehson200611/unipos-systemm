@@ -296,7 +296,7 @@ export default function Warehouse() {
         {/* Search */}
         <div className="animate-fade-up" style={{ animationDelay: '120ms' }}>
           <div className="relative">
-            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
             <input className="input pl-10 w-full sm:w-72"
               placeholder="Ингредиентро ҷустуҷӯ кунед..."
               value={search} onChange={(e) => setSearch(e.target.value)} />

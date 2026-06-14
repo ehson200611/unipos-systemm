@@ -45,7 +45,7 @@ export default function OnlineMenu() {
             </div>
           </div>
           <div className="relative">
-            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" />
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none" />
             <input
               placeholder="Таомро ҷустуҷӯ кунед..."
               value={search}
