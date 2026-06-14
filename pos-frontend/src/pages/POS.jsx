@@ -196,6 +196,7 @@ export default function POS() {
   const [barcodeMode, setBarcodeMode] = useState(false)
   const [barcodeVal, setBarcodeVal] = useState('')
   const [cashReceived, setCashReceived] = useState('')
+  const [numpadOpen, setNumpadOpen] = useState(false)
   const barcodeRef = useRef(null)
   const searchRef = useRef(null)
   const [qrOpen, setQrOpen] = useState(false)
@@ -301,6 +302,7 @@ export default function POS() {
       setDiscount('')
       setTableNumber('')
       setCashReceived('')
+      setNumpadOpen(false)
     } catch (e) { toast(e.response?.data?.detail || t(lang, 'pos_error'), 'error') }
     finally { setLoading(false) }
   }
@@ -635,21 +637,59 @@ export default function POS() {
               </div>
             )}
 
-            {/* Cash received + change */}
+            {/* Cash received + numpad + change */}
             {payment === 'cash' && cart.length > 0 && (
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Banknote size={14} className="text-emerald-500 shrink-0" />
-                  <input
-                    className="input py-2 text-sm flex-1"
-                    type="number"
-                    min="0"
-                    placeholder={t(lang, 'pos_cash_received_ph')}
-                    value={cashReceived}
-                    onChange={(e) => setCashReceived(e.target.value)}
-                  />
-                </div>
-                {parseFloat(cashReceived) >= total && (
+                {/* Display + open numpad */}
+                <button
+                  type="button"
+                  onClick={() => setNumpadOpen((v) => !v)}
+                  className="w-full flex items-center gap-2 border-2 border-emerald-300 bg-emerald-50 hover:border-emerald-400 rounded-xl px-3.5 py-2.5 transition-all"
+                >
+                  <Banknote size={15} className="text-emerald-500 shrink-0" />
+                  <span className={`flex-1 text-left text-sm font-semibold ${cashReceived ? 'text-emerald-700' : 'text-gray-400'}`}>
+                    {cashReceived ? `${cashReceived} ${t(lang, 'currency')}` : t(lang, 'pos_cash_received_ph')}
+                  </span>
+                  <span className="text-xs text-emerald-500 font-bold">{numpadOpen ? '▲' : '▼'}</span>
+                </button>
+
+                {/* Numpad */}
+                {numpadOpen && (
+                  <div className="bg-white border border-gray-200 rounded-2xl p-3 shadow-lg animate-scale-in">
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {['7','8','9','4','5','6','1','2','3'].map((k) => (
+                        <button key={k} type="button"
+                          onClick={() => setCashReceived((v) => v === '0' ? k : v + k)}
+                          className="h-11 rounded-xl bg-gray-50 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 text-lg font-bold text-gray-700 transition-all border border-gray-100">
+                          {k}
+                        </button>
+                      ))}
+                      <button type="button"
+                        onClick={() => setCashReceived((v) => (!v.includes('.') ? v + '.' : v))}
+                        className="h-11 rounded-xl bg-gray-50 hover:bg-indigo-50 active:scale-95 text-lg font-bold text-gray-500 transition-all border border-gray-100">
+                        .
+                      </button>
+                      <button type="button"
+                        onClick={() => setCashReceived((v) => v === '0' ? '0' : v + '0')}
+                        className="h-11 rounded-xl bg-gray-50 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 text-lg font-bold text-gray-700 transition-all border border-gray-100">
+                        0
+                      </button>
+                      <button type="button"
+                        onClick={() => setCashReceived((v) => v.slice(0, -1))}
+                        className="h-11 rounded-xl bg-red-50 hover:bg-red-100 active:scale-95 text-base font-bold text-red-500 transition-all border border-red-100">
+                        ⌫
+                      </button>
+                    </div>
+                    <button type="button"
+                      onClick={() => setCashReceived('')}
+                      className="mt-1.5 w-full h-9 rounded-xl bg-gray-100 hover:bg-gray-200 text-xs font-bold text-gray-500 transition-all">
+                      Тоза кардан
+                    </button>
+                  </div>
+                )}
+
+                {/* Change */}
+                {cashReceived && parseFloat(cashReceived) >= total && (
                   <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5">
                     <span className="text-sm font-semibold text-emerald-700">{t(lang, 'pos_change_lbl')}</span>
                     <span className="text-xl font-black text-emerald-600">
