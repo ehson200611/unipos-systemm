@@ -184,7 +184,7 @@ class PublicMenuCategorySerializer(serializers.ModelSerializer):
 class SystemSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SystemSettings
-        fields = ['telegram_bot_token', 'telegram_chat_id', 'telegram_enabled']
+        fields = ['telegram_bot_token', 'telegram_chat_id', 'telegram_enabled', 'employees', 'monthly_rev_target']
 
 
 class StocktakeLineSerializer(serializers.ModelSerializer):

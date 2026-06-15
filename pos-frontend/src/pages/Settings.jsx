@@ -63,6 +63,20 @@ export default function Settings() {
   const [empName, setEmpName]     = useState('')
   const [empSalary, setEmpSalary] = useState('')
 
+  // Load from server on mount
+  useEffect(() => {
+    getSystemSettings().then((r) => {
+      if (r.data.employees?.length) {
+        setEmployees(r.data.employees)
+        settings.update({ employees: r.data.employees })
+      }
+      if (r.data.monthly_rev_target) {
+        setMonthlyRevTarget(r.data.monthly_rev_target)
+        settings.update({ monthlyRevTarget: r.data.monthly_rev_target })
+      }
+    }).catch(() => {})
+  }, [])
+
   const totalSalaries = employees.reduce((s, e) => s + Number(e.salary || 0), 0)
   const dailyTarget   = monthlyRevTarget > 0 ? Math.ceil(monthlyRevTarget / 30) : 0
 
@@ -75,8 +89,11 @@ export default function Settings() {
   }
   const removeEmployee = (i) => setEmployees(employees.filter((_, idx) => idx !== i))
 
-  const handleSaveSalary = () => {
+  const handleSaveSalary = async () => {
     settings.update({ employees, monthlyRevTarget: Number(monthlyRevTarget) })
+    try {
+      await saveSystemSettings({ employees, monthly_rev_target: Number(monthlyRevTarget) })
+    } catch {}
     toast(lang === 'ru' ? 'Сохранено' : 'Нигоҳ шуд', 'success')
   }
 

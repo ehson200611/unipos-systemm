@@ -6,6 +6,8 @@ class SystemSettings(models.Model):
     telegram_bot_token = models.CharField(max_length=300, blank=True, default='')
     telegram_chat_id   = models.CharField(max_length=100, blank=True, default='')
     telegram_enabled   = models.BooleanField(default=False)
+    employees          = models.JSONField(default=list, blank=True, help_text='[{"name":"...","salary":0}]')
+    monthly_rev_target = models.FloatField(default=0)
 
     class Meta:
         verbose_name = 'Танзимоти система'
