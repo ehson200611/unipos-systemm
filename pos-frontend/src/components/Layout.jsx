@@ -29,7 +29,7 @@ const BASE_NAV = [
   { to: '/shifts',     icon: Clock,             lk: 'nav_shifts',     roles: ['admin','manager','cashier'],                    color: 'bg-indigo-500' },
   { to: '/workers',    icon: Users,             lk: 'nav_workers',    roles: ['admin'],                                        color: 'bg-rose-500' },
   { to: '/reports',    icon: BarChart2,         lk: 'nav_reports',    roles: ['admin','manager'],                              color: 'bg-cyan-500' },
-  { to: '/settings',   icon: Settings,          lk: 'nav_settings',   roles: ['admin','manager','cashier'],                    color: 'bg-slate-500' },
+  { to: '/settings',   icon: Settings,          lk: 'nav_settings',   roles: ['admin','manager'],                              color: 'bg-slate-500' },
 ]
 
 function useShiftTimer(shift) {
@@ -236,6 +236,22 @@ export default function Layout({ children }) {
                 {t(lang, 'shift_close_btn')}
               </button>
             )}
+            {/* Language switcher */}
+            <div className="flex items-center bg-gray-100 rounded-xl p-0.5">
+              {['tg', 'ru'].map((code) => (
+                <button
+                  key={code}
+                  onClick={() => settings.update({ language: code })}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                    lang === code
+                      ? 'bg-white text-indigo-700 shadow-sm'
+                      : 'text-gray-400 hover:text-gray-600'
+                  }`}
+                >
+                  {code === 'tg' ? 'ТЧ' : 'РУ'}
+                </button>
+              ))}
+            </div>
           </div>
         </header>
 

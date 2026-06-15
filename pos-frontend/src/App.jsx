@@ -53,7 +53,7 @@ function AppContent() {
         <Route path="/reports"   element={<PrivateRoute roles={['admin','manager']}><Reports /></PrivateRoute>} />
         <Route path="/customers" element={<PrivateRoute roles={['admin','manager','cashier']}><Customers /></PrivateRoute>} />
         <Route path="/suppliers" element={<PrivateRoute roles={['admin','manager']}><Suppliers /></PrivateRoute>} />
-        <Route path="/settings"  element={<PrivateRoute><Settings /></PrivateRoute>} />
+        <Route path="/settings"  element={<PrivateRoute roles={['admin','manager']}><Settings /></PrivateRoute>} />
         <Route path="/table-map" element={<PrivateRoute roles={['admin','manager','cashier']}><TableMap /></PrivateRoute>} />
         <Route path="/modifiers" element={<PrivateRoute roles={['admin','manager']}><ModifierGroups /></PrivateRoute>} />
         <Route path="/stocktake" element={<PrivateRoute roles={['admin','manager']}><Stocktake /></PrivateRoute>} />
