@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 
 const BASE_NAV = [
-  { to: '/',           icon: LayoutDashboard,   lk: 'nav_dashboard',  roles: ['admin','manager','cashier'], color: 'bg-blue-500' },
+  { to: '/',           icon: LayoutDashboard,   lk: 'nav_dashboard',  roles: ['admin','manager'],           color: 'bg-blue-500' },
   { to: '/pos',        icon: ShoppingCart,      lk: 'nav_pos',        roles: ['admin','manager','cashier'],                    color: 'bg-emerald-500' },
   { to: '/table-map',  icon: LayoutGrid,        lk: 'nav_table_map',  roles: ['admin','manager','cashier'],                    color: 'bg-sky-500' },
   { to: '/customers',  icon: UserCircle,        lk: 'nav_customers',  roles: ['admin','manager','cashier'],                    color: 'bg-indigo-500' },

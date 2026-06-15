@@ -1,6 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import useAuthStore from './store/useAuthStore'
+
+function RoleHome() {
+  const { user } = useAuthStore()
+  return <Navigate to={user?.role === 'cashier' ? '/pos' : '/'} replace />
+}
 import { getMe } from './api/auth'
 import Layout from './components/Layout'
 import PrivateRoute from './components/PrivateRoute'
@@ -42,7 +47,7 @@ function AppContent() {
   return (
     <Layout>
       <Routes>
-        <Route path="/"          element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/"          element={<PrivateRoute roles={['admin','manager']}><Dashboard /></PrivateRoute>} />
         <Route path="/pos"       element={<PrivateRoute roles={['admin','manager','cashier']}><POS /></PrivateRoute>} />
         <Route path="/products"  element={<PrivateRoute roles={['admin','manager']}><Products /></PrivateRoute>} />
         <Route path="/warehouse" element={<PrivateRoute roles={['admin','manager']}><Warehouse /></PrivateRoute>} />
@@ -58,8 +63,8 @@ function AppContent() {
         <Route path="/modifiers" element={<PrivateRoute roles={['admin','manager']}><ModifierGroups /></PrivateRoute>} />
         <Route path="/stocktake" element={<PrivateRoute roles={['admin','manager']}><Stocktake /></PrivateRoute>} />
         <Route path="/menu"      element={<OnlineMenu />} />
-        <Route path="/login"     element={<Navigate to="/" replace />} />
-        <Route path="*"          element={<Navigate to="/" replace />} />
+        <Route path="/login"     element={<RoleHome />} />
+        <Route path="*"          element={<RoleHome />} />
       </Routes>
     </Layout>
   )
