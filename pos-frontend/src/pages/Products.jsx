@@ -188,6 +188,17 @@ function Modal({ product, categories, onSave, onClose, toast, lang }) {
   const handleImage = (e) => {
     const file = e.target.files[0]
     if (!file) return
+    const allowed = ['image/jpeg', 'image/png', 'image/webp']
+    if (!allowed.includes(file.type)) {
+      toast('Танҳо JPG, PNG ё WEBP ҷоиз аст', 'error')
+      e.target.value = ''
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast('Акс набояд аз 5 МБ зиёд бошад', 'error')
+      e.target.value = ''
+      return
+    }
     setImageFile(file)
     setImagePreview(URL.createObjectURL(file))
   }
@@ -234,7 +245,7 @@ function Modal({ product, categories, onSave, onClose, toast, lang }) {
               </div>
               <div>
                 <p className="text-sm font-medium text-indigo-600 group-hover:underline">Аксро интихоб кунед</p>
-                <p className="text-xs text-gray-400 mt-0.5">JPG, PNG · то 5 МБ</p>
+                <p className="text-xs text-gray-400 mt-0.5">JPG · PNG · WEBP · то 5 МБ</p>
                 {imagePreview && (
                   <button type="button" onClick={(e) => { e.preventDefault(); setImageFile(null); setImagePreview(null) }}
                     className="text-xs text-red-400 hover:text-red-600 mt-1">Нест кунед</button>

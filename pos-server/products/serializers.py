@@ -36,6 +36,16 @@ class ProductSerializer(serializers.ModelSerializer):
             return obj.image.url
         return None
 
+    def validate_image(self, value):
+        if value is None:
+            return value
+        allowed = ['image/jpeg', 'image/png', 'image/webp']
+        if hasattr(value, 'content_type') and value.content_type not in allowed:
+            raise serializers.ValidationError('Танҳо JPG, PNG ё WEBP ҷоиз аст.')
+        if value.size > 5 * 1024 * 1024:
+            raise serializers.ValidationError('Акс набояд аз 5 МБ зиёд бошад.')
+        return value
+
 
 class ProductIngredientReadSerializer(serializers.ModelSerializer):
     ingredient_name = serializers.CharField(source='ingredient.name', read_only=True)
